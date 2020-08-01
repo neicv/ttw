@@ -1,0 +1,5 @@
+<p>
+    <label for='label_settings_empty'><%= l(:label_setting_empty) %></label>
+    <%= hidden_field_tag('settings[empty]', 0, :id => nil).html_safe %>
+    <%= check_box_tag 'settings[empty]', true, @settings['empty'] == 'true' %>
+</p>

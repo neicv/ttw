@@ -1,0 +1,66 @@
+<div class="contextual">
+    <%= link_to l(:label_settings),
+                  { controller: 'settings', action: 'plugin', id: 'task_theme_wizard' },
+                  :class => 'icon icon-projects' %> 
+                  <!--settings-->
+</div>
+<!-- <div class="contextual">
+    <%= link_to_if_authorized(l(:label_ttw_category_new),
+                    { controller: 'ttw_cats', action: 'new', id: 'task_theme_wizard'  },
+                      class: 'icon icon-add') %>
+</div> -->
+<div class="contextual">
+    <%= link_to l(:label_ttw_category_new),
+                    { controller: 'ttw_cats', action: 'new', project_id: @project },
+                    :class => 'icon icon-add' %>
+</div>
+
+<h2><%=l(:label_ttw_category_plural)%></h2>
+
+<% if @ttw_cats.empty? %>
+    <div class='template_box'>
+      <%= l(:label_ttw_no_category_for_this_project) %>
+    </div>
+<% else %>
+
+<div class="attachment_category_box">
+    <table class="list attachment_categories">
+      <thead><tr>
+      <th><%=l(:field_name)%></th>
+      <th><%=l(:field_sub_cat)%></th>
+      <th><%=l(:label_ttw_this_category)%></th>
+      <th></th>
+      </tr></thead>
+      <tbody>
+    <% for cat in @ttw_cats %>
+      <tr class="<%= cycle("odd", "even") %>">
+      <td class="category"><%= link_to cat.category, edit_category_path(category) %></td>
+      <td class="tag"><%= category_tag(category, :span) %></td>
+      <td class="count"><%= cat.category.length %></td>
+      <td class="buttons">
+        <%= reorder_handle(cat) %>
+        <%= delete_link ttw_cat_path(cat) %>
+      </td>
+      </tr>
+    <% end %>
+      <!-- <tr class="<%= cycle("odd", "even") %>">
+      <td class="category"><%= l(:label_other) %></td>
+      <td class="color"><%= l(:label_uncategorized) %></td>
+      <td class="count"><%= uncategorized_attachments_count %></td>
+      <td class="buttons">&nbsp;</td>
+      </tr>
+      <tr class="<%= cycle("odd", "even") %>">
+      <td class="total"><%=l(:label_total)%></td>
+      <td class="color"><div>&nbsp;</div></td>
+      <td class="allcount"><%= Attachment.count %></td>
+      <td class="buttons">&nbsp;</td>
+      </tr> -->
+      </tbody>
+    </table>
+    </div>
+
+<% end %>
+
+<% content_for :header_tags do %>
+    <%= stylesheet_link_tag 'task_theme_wizard', :plugin => 'task_theme_wizard' %>
+<% end %>

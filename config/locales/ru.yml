@@ -1,0 +1,9 @@
+ru:
+  label_setting_empty: "Тест строчка"
+  label_ttw_admin_title: "Шаблонка"
+  label_ttw_category_new: "Новая категория"
+  label_ttw_category_plural: "Тематайзер"
+  label_ttw_no_category_for_this_project: "Для данного проекта не настроены базовые категории темы."
+  field_name: "Категория"
+  field_sub_cat: "СубКат"
+  label_ttw_this_category: "Hfp"

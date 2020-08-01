@@ -1,0 +1,11 @@
+@import '../fonts/robotonew-lightitalic/styles.css';
+
+.template_box {
+    font-size: 16px;
+    font-family: RobotoNew;
+    padding: 6px;
+    margin-bottom: 20px;
+    color: #505050;
+    line-height: 1.5em;
+    border: 1px solid #E4E4E4;
+}
