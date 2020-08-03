@@ -1,7 +1,7 @@
 # Plugin's routes
 # See: http://guides.rubyonrails.org/routing.html
 
-#get 'ttw_cats', :to => 'ttw_cats#index'
+get 'ttw_cats', :to => 'ttw_cats#index'
 
 RedmineApp::Application.routes.draw do
 

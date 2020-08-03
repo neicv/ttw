@@ -1,4 +1,4 @@
-<%= title [l(:label_ttw_category_plural), ttw_cats_path], l(:label_ttw_category_new) %>
+<%= title [l(:label_ttw_category_plural), ttw_cats_path], @ttw_cat.category %>
 
 <%= labelled_form_for @ttw_cat do |f| %>
   <%= render :partial => 'form', :locals => {:f => f} %>

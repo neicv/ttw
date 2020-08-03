@@ -1,3 +1,4 @@
+
 <div class="contextual">
     <%= link_to l(:label_settings),
                   { controller: 'settings', action: 'plugin', id: 'task_theme_wizard' },
@@ -17,49 +18,72 @@
 
 <h2><%=l(:label_ttw_category_plural)%></h2>
 
+<div class="tabs">
+  <ul>
+    <li><%= link_to l(:label_ttw_category_maker), ttw_cats_path(), :class => 'selected' %></li>
+    <li><%= link_to l(:label_ttw_templates_maker), ttw_cats_path() %></li>
+  </ul>
+</div>
+
 <% if @ttw_cats.empty? %>
     <div class='template_box'>
       <%= l(:label_ttw_no_category_for_this_project) %>
     </div>
 <% else %>
 
-<div class="attachment_category_box">
-    <table class="list attachment_categories">
+<div class="ttw_category_box">
+    <table class="list ttw_categories">
       <thead><tr>
       <th><%=l(:field_name)%></th>
-      <th><%=l(:field_sub_cat)%></th>
+      <th><%=l(:field_sub_category)%></th>
       <th><%=l(:label_ttw_this_category)%></th>
       <th></th>
       </tr></thead>
       <tbody>
     <% for cat in @ttw_cats %>
       <tr class="<%= cycle("odd", "even") %>">
-      <td class="category"><%= link_to cat.category, edit_category_path(category) %></td>
-      <td class="tag"><%= category_tag(category, :span) %></td>
-      <td class="count"><%= cat.category.length %></td>
+      <td class="category"><%= link_to cat.category, edit_ttw_cat_path(cat) %></td>
+      <td class="tag">
+        <%= cat.sub_category %>
+        <!-- <table class="list ttw_categories">
+          <tbody>
+          <%# cat.sub_category.each do |scat| %>
+            <tr class="<%#= cycle("odd", "even") %>">
+            <td class="tag"><%#= scat %></td>
+            </tr>
+          <%# end %>
+          </tbody>
+        </table> -->
+      </td>
+
+      <td class="tag"> <%= check_box_tag 'cat[enabled]', 1, cat.enabled?, :disabled => true, :readonly => true %></td> 
       <td class="buttons">
-        <%= reorder_handle(cat) %>
         <%= delete_link ttw_cat_path(cat) %>
       </td>
       </tr>
     <% end %>
-      <!-- <tr class="<%= cycle("odd", "even") %>">
-      <td class="category"><%= l(:label_other) %></td>
-      <td class="color"><%= l(:label_uncategorized) %></td>
-      <td class="count"><%= uncategorized_attachments_count %></td>
+      <!-- 
+        
+        
+        <tr class="<%#= cycle("odd", "even") %>">
+      <td class="category"><%#= l(:label_other) %></td>
+      <td class="color"><%#= l(:label_uncategorized) %></td>
+      <td class="count"><%#= uncategorized_attachments_count %></td>
+      <td class="buttons">&nbsp;</td>
+      </tr>-->
+      <%#= reorder_handle(cat) %>
+      <tr class="<%#= cycle("odd", "even") %>">
+      <td class="category"><%#=l(:label_ttw_total)%></td>
+      <td class="tag"><div>&nbsp;</div></td>
+      <td class="tag"><%#= ttw_count %></td>
       <td class="buttons">&nbsp;</td>
       </tr>
-      <tr class="<%= cycle("odd", "even") %>">
-      <td class="total"><%=l(:label_total)%></td>
-      <td class="color"><div>&nbsp;</div></td>
-      <td class="allcount"><%= Attachment.count %></td>
-      <td class="buttons">&nbsp;</td>
-      </tr> -->
       </tbody>
     </table>
     </div>
 
 <% end %>
+
 
 <% content_for :header_tags do %>
     <%= stylesheet_link_tag 'task_theme_wizard', :plugin => 'task_theme_wizard' %>
