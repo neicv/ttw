@@ -1,0 +1,17 @@
+<%= error_messages_for 'ttw_cat' %>
+
+<div class="splitcontentleft">
+<div class="box tabular">
+
+<p><%= f.text_field :category, :required => true %></p>
+
+<p>
+    <%= f.text_area :sub_category, :value => (@ttw_cat.sub_category != "" ? @ttw_cat.sub_category.to_a.join("\n") : nil), :rows => 15, :required => true %>
+    <em class="info"><%= l(:text_ttw_sub_categoies_info) %></em>
+</p>
+
+<p><%= f.check_box :enabled %></p>
+
+</div>
+<p><%= submit_tag l(:button_save) %></p>
+</div>

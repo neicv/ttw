@@ -2,6 +2,8 @@
 
 Description goes here
 
+![image](https://pagekit.friendly-it.ru/storage/img/ttw.jpg)
+
 ### Install
 download plugin and copy plugin folder task_theme_wizard go to Redmine's plugins folder
 
