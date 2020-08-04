@@ -13,3 +13,5 @@ ru:
   label_ttw_this_category: "Активна"
   error_unable_delete_category: "Невозможно удалить категорию"
   text_ttw_sub_categoies_info: "По одному значению в каждой строке"
+  label_ttw_btn_start_theme: "Темазатор"
+  label_ttw_issue_info: "Используйте темазатор для заполнения темы задачи!"

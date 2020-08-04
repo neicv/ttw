@@ -1,6 +1,6 @@
 
 <div class="contextual">
-    <%= link_to l(:label_settings),
+    <%= link_to_if_authorized l(:label_settings),
                   { controller: 'settings', action: 'plugin', id: 'task_theme_wizard' },
                   :class => 'icon icon-projects' %> 
                   <!--settings-->
@@ -73,10 +73,10 @@
       </tr>-->
       <%#= reorder_handle(cat) %>
       <tr class="<%#= cycle("odd", "even") %>">
-      <td class="category"><%#=l(:label_ttw_total)%></td>
+      <td class="category"><%=l(:label_ttw_total)%></td>
       <td class="tag"><div>&nbsp;</div></td>
-      <td class="tag"><%#= ttw_count %></td>
-      <td class="buttons">&nbsp;</td>
+      <td class="tag"><div>&nbsp;</div></td>
+      <td class="tag"><%= ttw_count %></td>
       </tr>
       </tbody>
     </table>

@@ -1,0 +1,10 @@
+api.array :ttw_cats do
+  @ttw_cats.each do |cat|
+    api.cat do
+      api.id cat.id
+      api.category cat.category
+      api.sub_category cat.sub_category
+      api.enable cat.enabled
+    end
+  end
+end

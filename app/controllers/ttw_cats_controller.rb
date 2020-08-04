@@ -4,14 +4,14 @@ class TtwCatsController < ApplicationController
   layout 'admin'
   # self.main_menu = false
 
-  before_filter :require_admin, :except => :index
+  #before_filter :global_authorize, :authorize
+  before_filter :require_admin, :except => :index, :except => :list_themes
   before_filter :require_admin_or_api_request, :only => :index
-  accept_api_auth :index
+  accept_api_auth :index, :list_themes, :load
 
-  helper :queries
-  include QueriesHelper
-  helper :sort
-  include SortHelper
+  helper :task_theme_wizard
+  include TaskThemeWizardHelper
+  #include Concerns::TaskThemeWizardCommon
 
   def index
     @ttw_cats = TtwCat.sorted.to_a
@@ -26,7 +26,6 @@ class TtwCatsController < ApplicationController
   end
 
   def create
-    #@ttw_cat = TtwCat.new(params[:ttw_cat])
     @ttw_cat = TtwCat.new(ttw_params)
     if @ttw_cat.save
       flash[:notice] = l(:notice_successful_create)
@@ -61,6 +60,34 @@ class TtwCatsController < ApplicationController
     end
   end
 
+  def list_themes
+    @ttw_cats = TtwCat.sorted.to_a
+    respond_to do |format|
+      format.html do
+        render action: '_list_themes',
+               layout: false,
+               locals: { ttw_cats: @ttw_cats,
+                        }
+      end
+      format.api do
+        render action: '_list_themes',
+               layout: false,
+               locals: { ttw_cats: @ttw_cats,
+                        }
+      end
+
+      format.json { render json: @ttw_cats }
+      #format.json { render :json => @ttw_cats}
+
+      # format.json do
+      #   render action: '_list_themes',
+      #          layout: false,
+      #          locals: { ttw_cats: @ttw_cats,
+      #                   }
+      # end
+    end
+  end
+
   def destroy
     TtwCat.find(params[:id]).destroy
     redirect_to ttw_cats_path
@@ -73,5 +100,9 @@ class TtwCatsController < ApplicationController
 
   def ttw_params
     params.require(:ttw_cat).permit(:category, :sub_category, :enabled)
+  end
+
+  def global_authorize
+    User.current.memberships.detect {|m| m.role.position == 1}
   end
 end

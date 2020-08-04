@@ -2,7 +2,7 @@ Redmine::Plugin.register :task_theme_wizard do
   name 'Task Theme Wizard plugin'
   author 'neicv'
   description 'This is a plugin for Redmine'
-  version '0.0.3'
+  version '0.0.4'
   url 'http://localhost/redmine/plugin/task_theme_wizard'
   author_url 'https://friendly-it.ru/redmine'
   requires_redmine :version_or_higher => '3.1.2'
@@ -18,9 +18,13 @@ Redmine::Plugin.register :task_theme_wizard do
 
   # permissions 
   project_module :task_theme_wizard do
+    permission :edit_task_theme_wizard, task_theme_wizard: %i[new create edit update destroy list_themes]
+    permission :show_task_theme_wizard, task_theme_wizard: %i[index show load list_themes]
+                                      
+    permission :manage_task_theme_wizard, { task_theme_wizard_settings: %i[index edit] }, require: :member
 
   end
 
 end
 
-# require 'task_theme_wizard'
+require 'task_theme_wizard'
