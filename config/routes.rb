@@ -20,5 +20,13 @@ RedmineApp::Application.routes.draw do
       get 'load', on: :collection
       post 'list_themes', on: :collection
     end
+
+
+    resources :ttw_issue_templates, :except => :show 
+
+    resources :ttw_issue_templates, only: %i[load preview list_templates] do
+      get 'load', on: :collection
+      post 'list_templates', on: :collection
+    end
   
   end

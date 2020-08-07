@@ -1,8 +1,11 @@
-function startTTW(event, baseUrl, projectId) {
+function startTTW(event, baseUrl, projectId, isTemplatesEnabled) {
 
     event.preventDefault()
     //let baseUrl = "http://localhost/redmine/ttw_cats/list_themes"
     let ns = this
+
+    // redmine description field limitation
+    const maxlength = 255
 
     window.fetch(baseUrl + '.json',
       {
@@ -11,8 +14,8 @@ function startTTW(event, baseUrl, projectId) {
         mode: "no-cors",
         headers: {
           'Content-Type': 'application/json',
-          //'X-CSRF-Token': ns.getCsrfToken()
-          'X-CSRF-Token': getCsrfToken()
+          'X-CSRF-Token': ns.getCsrfToken()
+          //'X-CSRF-Token': getCsrfToken()
         },
         body: JSON.stringify({
           //template_id: selectedTemplate.value,
@@ -136,35 +139,35 @@ function startTTW(event, baseUrl, projectId) {
             let subCategory = elSelectedId != -1 ? subSelect.find(suber => suber[0] == elSelectedId ) : subSelect[0]
             
             tmplm = `
+            <button class="uk-modal-close-default" type="button" uk-close></button>
             <div class="ttw-text">
             <div class="" id="ttw-modal-themazator">
             <h3 class="uk-h4">Темазатор</h3></div>
             <div class="uk-form-stacked">
             <ul uk-tab>
                 <li><a href="#">Тема</a></li>
-                <li><a href="#">Шаблон</a></li>
+                ${isTemplatesEnabled ? `<li><a href="#">Шаблон</a></li>` : ''}
             </ul>
             <ul class="uk-switcher uk-margin">
-            <li>
-                <fieldset class="uk-fieldset" id="ttw-modal-fieldset-theme">
-                    <legend class="uk-legend" style="font-size: 1.2rem;">Выберете категорию:</legend>
-                    <div class="uk-margin">${elSelect}</div>
-                    <div class="uk-margin" id="ttw-selector-subcategory">${subCategory[1]}</div>
-                    <div class="uk-margin">
-                    <label class="uk-form-label" for="form-stacked-text">Текст темы:</label>
-                    <div class="uk-form-controls">
-                        <textarea class="uk-textarea" rows="3" placeholder="Тема" id="ttw-textarea-theme" value="${strTextarea}">${strTextarea}</textarea>
-                    </div>
-                    </div>
-                </fieldset>
-            </li>
                 <li>
-                <legend class="uk-legend" style="font-size: 1.2rem;">Выберете шаблон:</legend>
+                    <fieldset class="uk-fieldset" id="ttw-modal-fieldset-theme">
+                        <legend class="uk-legend" style="font-size: 1.2rem;">Выберете категорию:</legend>
+                        <div class="uk-margin">${elSelect}</div>
+                        <div class="uk-margin" id="ttw-selector-subcategory">${subCategory[1]}</div>
+                        <div class="uk-margin">
+                        <label class="uk-form-label" for="form-stacked-text">Текст темы:</label>
+                        <div class="uk-form-controls">
+                            <textarea class="uk-textarea" rows="3" placeholder="Тема" id="ttw-textarea-theme" value="${strTextarea}">${strTextarea}</textarea>
+                        </div>
+                        </div>
+                    </fieldset>
                 </li>
+                ${isTemplatesEnabled ? `<li>
+                    <legend class="uk-legend" style="font-size: 1.2rem;">Выберете шаблон:</legend>
+                </li>` : ''}
             </ul>
             </div>
             </div>`
-            
             isLoadedSelector = true
         }
         else {
@@ -175,45 +178,104 @@ function startTTW(event, baseUrl, projectId) {
             Данные не загружены</div>`
         }
 
+        let textarea
+        let selector
+        let fieldset
+        let listenerTextareaPaste
+        let listenerTextareaInput
+        let listenerSelectorCategory
+        let listenerTextareaKeyDown
+
+        //const modal = UIkit.modal.confirm(tmplm, { labels: { ok: 'Применить', cancel: 'Отмена' }, stack: true }).then(function() {
         const modal = UIkit.modal.confirm(tmplm, { labels: { ok: 'Применить', cancel: 'Отмена' }, stack: true, 'bgClose': true })
         const el = modal.dialog.$el
         let btnOk = el.getElementsByClassName('uk-button-primary')[0]
-        btnOk.disabled = !isValid(strClearTheme)
-        //modal.dialog.show()
-        modal.then(function() {
-                console.log('Confirmed.')
-                applyChanges(document.querySelector('#ttw-modal-fieldset-theme') ,issueSubject, isValid(textarea.value) ? textarea.value.trim() : strClearTheme, loadedSelector)
-                UIkit.notification("Темазатор применён", {status: 'primary', timeout: 750})
-            }, function () {
-                console.log('Rejected.')
-        })
+        btnOk.disabled = !isValidSummaryString(strClearTheme)
 
+        if (isLoadedSelector){
 
-        isLoadedSelector && document.body.querySelector('#ttw-selector-category').addEventListener('change', event => {
-            for (let opt of event.target.children) {
-                if (opt.selected) {
-                    let subSelector = subSelect.find(suber => suber[0] == opt.value )
-                    document.querySelector('#ttw-selector-subcategory').innerHTML = subSelector[1]
-                    break
+            textarea = document.body.querySelector('#ttw-textarea-theme')
+            selector = document.body.querySelector('#ttw-selector-category')
+            fieldset = el.querySelector('#ttw-modal-fieldset-theme')
+
+            listenerTextareaPaste = function(e) {
+                let clipboardData
+                let pastedData
+                e.stopPropagation()
+                e.preventDefault()
+                clipboardData = e.clipboardData || window.clipboardData
+                pastedData = avoidHTML(clipboardData.getData('Text'))
+                pastedData = pastedData.replace( /[\t\r\n]/g, " " )
+                pastedData = pastedData.slice(0, maxlength - getFieldString(fieldset, loadedSelector).length)
+                if (pastedData.length !=0) textarea.value = pastedData
+            }
+            
+            listenerTextareaInput = function(e) {
+                btnOk.disabled = !isValidSummaryString(textarea.value)
+            }
+
+            listenerTextareaKeyDown = function(event) {
+                let key = event.key
+                if (key == 'Home' || key == 'Delete' || key == 'Backspace' || key == 'ArrowLeft' || key == 'ArrowRight'  || key == 'End' || key == 'ArrowUp' || key == 'ArrowDown') return
+                
+                if (textarea.value.length > maxlength - getFieldString(fieldset, loadedSelector).length - 1) {
+                //textarea.value = textarea.value.slice(0, -1)
+                event.preventDefault()
+                event.stopPropagation()
                 }
             }
-        }, false)
+            
+            listenerSelectorCategory = function(event){
+                for (let opt of event.target.children) {
+                    if (opt.selected) {
+                        let subSelector = subSelect.find(suber => suber[0] == opt.value )
+                        document.querySelector('#ttw-selector-subcategory').innerHTML = subSelector[1]
+                        break
+                    }
+                }
+            }
 
-        let textarea = isLoadedSelector && document.body.querySelector('#ttw-textarea-theme')
+            selector.addEventListener('change', listenerSelectorCategory, false)
+            textarea.addEventListener('paste',  listenerTextareaPaste, false)
+            textarea.addEventListener('input',  listenerTextareaInput, false)
+            textarea.addEventListener('keydown', listenerTextareaKeyDown, false)
+        }
 
-        textarea.addEventListener('paste', function(e) {
-            let clipboardData
-            let pastedData
-            e.stopPropagation()
-            e.preventDefault()
-            clipboardData = e.clipboardData || window.clipboardData
-            pastedData = avoidHTML(clipboardData.getData('Text'))
-            if (pastedData.length !=0) document.querySelector('#ttw-textarea-theme').value = pastedData.replace( /[\t\r\n]/g, " " )
-        }, false)
+        modal.then(function() {
+            //console.log('Confirmed.')
+            applyChanges(issueSubject, getSummaryString(fieldset , isValidSummaryString(textarea.value) ? textarea.value.trim() : strClearTheme, loadedSelector))
+            UIkit.notification("Темазатор применён", {status: 'primary', timeout: 750})
+        }, function () {
+            //console.log('Rejected.')
+            if (isLoadedSelector){
+                try {
+                    selector.removeEventListener('change', listenerSelectorCategory, false)
+                    textarea.removeEventListener('paste', listenerTextareaPaste, false)
+                    textarea.removeEventListener('input',  listenerTextareaInput, false)
+                    textarea.removeEventListener('keydown', listenerTextareaKeyDown, false)
+                }
+                catch (e){
+                    console.log('error - cant remove listeners ' + e)
+                }
+            }
+        })
 
-        textarea.addEventListener('input', function() {
-            btnOk.disabled = !isValid(textarea.value)
-        }, false);
+        /* modal hide event */
+        // UIkit.util.on('#my-id', 'show', function () {
+        //   //console.log("do something");
+        //   UIkit.notification('Card has been moved.', 'success');
+        // });
+        function isValidSummaryStringMaxLength(val){
+            if(isLoadedSelector && fieldset !== undefined){
+                let hLen = getFieldString(fieldset, loadedSelector).length  + val.length - 1
+                return hLen <= maxlength
+            }
+            else return val.length >= 10
+        }
+
+        function isValidSummaryString(val){
+            return isValid(val) && isValidSummaryStringMaxLength(val)
+        }
     })
 }
 
@@ -227,13 +289,21 @@ function getCsrfToken() {
     return ''
 }
 
-function applyChanges(fieldset, subject, strClearTheme, selectors){
+function getFieldString(fieldset, selectors){
     let strTheme = ''
     let el = fieldset.elements
     let v1 = selectors.find(suber => suber.id == el[0].value)
     strTheme += '['+ v1['category'] + ']'
     strTheme += '['+ el[1].value + ']'
-    subject.value = strTheme + strClearTheme
+    return strTheme
+}
+
+function getSummaryString (fieldset, strClearTheme, selectors){
+    return getFieldString(fieldset, selectors) + strClearTheme
+}
+
+function applyChanges(subject, val){
+    subject.value = val
     console.log('Apply')
 }
 
@@ -255,5 +325,3 @@ function avoidHTML(text){
 function isValid(val){
     return val.length >= 10
 }
-
-  

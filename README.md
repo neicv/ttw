@@ -27,10 +27,14 @@ sudo /etc/init.d/apache2 restart
 
 ### How to
 
-add value in db:
+#### add value in db:
 
 Goto console:
 ruby bin/rails console
 
 Add:
 TtwCat.create(:category => "Last Us", :sub_category => "One\n Two\n Six\n", :enabled => true)
+
+#### help to new migrate
+
+delete shema this plugin in bd 

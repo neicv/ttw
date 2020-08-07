@@ -5,7 +5,7 @@
                 <%= l(:label_ttw_issue_info) %>
             </td>
             <td style="text-align: right; padding-right: 30px;" class='ttw_table_right'>
-                <button class="template_box ttw-btn ttw-btn-primary ttw-btn-large" onclick="startTTW(event, baseUrl, projectId)">
+                <button class="template_box ttw-btn ttw-btn-primary ttw-btn-large" onclick="startTTW(event, baseUrl, projectId, isTemplatesEnabled)">
                 <%= l(:label_ttw_btn_start_theme) %>
                 </button>
             </td>
@@ -18,10 +18,9 @@
     const baseUrl = "<%= url_for(controller: 'ttw_cats', action: 'list_themes') %>"
     //const templateId = "<%#= issue_template&.id || '' %>"
     //const templateType = 'issue_template'
-    //const trackerPulldownId = templateType + '_tracker_id'
     const base_builtin_fields = <%= @ttw_cats.to_json.html_safe %>
-    //const base_custom_fields = <%#= custom_fields.html_safe %>
     const projectId = "<%= project.id %>"
+    const isTemplatesEnabled = "<%= Setting['plugin_task_theme_wizard']['empty'].presence || true %>"
   </script>
 
   <%= javascript_include_tag('uikit.min', plugin: 'task_theme_wizard') %>

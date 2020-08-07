@@ -1,0 +1,11 @@
+api.array :ttw_issue_templates do
+  @ttw_issue_templates.each do |issue_template|
+    api.issue_template do
+      api.id issue_template.id
+      api.name issue_template.name
+      api.description issue_template.description
+      api.tracker_str issue_template.tracker_str
+      api.enable issue_template.enabled
+    end
+  end
+end

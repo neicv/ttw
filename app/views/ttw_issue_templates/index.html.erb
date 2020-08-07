@@ -1,0 +1,59 @@
+<div class="contextual">
+    <%= link_to l(:label_settings),
+                  { controller: 'settings', action: 'plugin', id: 'task_theme_wizard' },
+                  :class => 'icon icon-projects' %> 
+                  <!--settings-->
+</div>
+
+<div class="contextual">
+    <%= link_to l(:label_ttw_new_templates),
+                    { controller: 'ttw_issue_templates', action: 'new', project_id: @project },
+                    :class => 'icon icon-add' %>
+</div>
+
+<h2><%=l(:label_ttw_issue_templates_plural)%></h2>
+
+<div class="tabs">
+  <ul>
+    <li><%= link_to l(:label_ttw_category_maker), ttw_cats_path() %></li>
+    <li><%= link_to l(:label_ttw_templates_maker), ttw_issue_templates_path(), :class => 'selected' %></li>
+  </ul>
+</div>
+
+<% if @ttw_issue_templates.empty? %>
+    <div class='template_box'>
+      <%= l(:label_ttw_no_issue_templates_for_this_project) %>
+    </div>
+<% else %>
+
+<div class="ttw_category_box">
+    <table class="list ttw_categories">
+      <thead><tr>
+      <th><%=l(:field_name)%></th>
+      <th><%=l(:field_description)%></th>
+      <th><%=l(:field_tracker)%></th>
+      <th><%=l(:field_enabled)%></th>
+      <th></th>
+      </tr></thead>
+      <tbody>
+      <% for issue_template in @ttw_issue_templates %>
+        <tr class="<%= cycle("odd", "even") %>">
+        <td class="category"><%= link_to issue_template.name, edit_ttw_issue_template_path(issue_template) %></td>
+        <td class="tag"><%= issue_template.description[0, 64] << " ..." %></td>
+        <td class="tag"><%= issue_template.tracker_str %></td>
+
+        <td class="tag"> <%= check_box_tag 'issue_template[enabled]', 1, issue_template.enabled?, :disabled => true, :readonly => true %></td> 
+        <td class="buttons">
+          <%= delete_link ttw_issue_templates_path(issue_template) %>
+        </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+    </div>
+
+<% end %>
+
+<% content_for :header_tags do %>
+    <%= stylesheet_link_tag 'task_theme_wizard', :plugin => 'task_theme_wizard' %>
+<% end %>

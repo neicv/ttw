@@ -1,15 +1,11 @@
 
 <div class="contextual">
-    <%= link_to_if_authorized l(:label_settings),
+    <%= link_to l(:label_settings),
                   { controller: 'settings', action: 'plugin', id: 'task_theme_wizard' },
                   :class => 'icon icon-projects' %> 
                   <!--settings-->
 </div>
-<!-- <div class="contextual">
-    <%= link_to_if_authorized(l(:label_ttw_category_new),
-                    { controller: 'ttw_cats', action: 'new', id: 'task_theme_wizard'  },
-                      class: 'icon icon-add') %>
-</div> -->
+
 <div class="contextual">
     <%= link_to l(:label_ttw_category_new),
                     { controller: 'ttw_cats', action: 'new', project_id: @project },
@@ -21,7 +17,7 @@
 <div class="tabs">
   <ul>
     <li><%= link_to l(:label_ttw_category_maker), ttw_cats_path(), :class => 'selected' %></li>
-    <li><%= link_to l(:label_ttw_templates_maker), ttw_cats_path() %></li>
+    <li><%= link_to l(:label_ttw_templates_maker), ttw_issue_templates_path() %></li>
   </ul>
 </div>
 
@@ -83,7 +79,6 @@
     </div>
 
 <% end %>
-
 
 <% content_for :header_tags do %>
     <%= stylesheet_link_tag 'task_theme_wizard', :plugin => 'task_theme_wizard' %>

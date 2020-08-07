@@ -1,0 +1,5 @@
+<%= title [l(:label_ttw_issue_templates_plural), ttw_issue_templates_path], @ttw_issue_template.name %>
+
+<%= labelled_form_for @ttw_issue_template do |f| %>
+  <%= render :partial => 'form', :locals => {:f => f} %>
+<% end %>

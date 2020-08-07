@@ -105,4 +105,12 @@ class TtwCatsController < ApplicationController
   def global_authorize
     User.current.memberships.detect {|m| m.role.position == 1}
   end
+
+  def templates_enable?
+    plugin_setting['empty'].to_s == 'true'
+  end
+
+  def plugin_setting
+    Setting.plugin_task_theme_wizard
+  end
 end
