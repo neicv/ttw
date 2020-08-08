@@ -44,28 +44,23 @@ function startTTW(event, baseUrl, projectId, isTemplatesEnabled) {
         }
         let parsedData = JSON.parse(data)
 
+        let isTemplatesEnabled = true
+
         let templateKey = Object.keys(parsedData)[0]
-        let obj = parsedData[templateKey]
+        let loadedSelector = parsedData[templateKey]
+
+        templateKey = Object.keys(parsedData)[1]
+        let loadedTemplates = parsedData[templateKey]
+
+        templateKey = Object.keys(parsedData)[2]
+        let loadedTrackers = parsedData[templateKey]
+
 
         let issueSubject = document.getElementById('issue_subject')
         let issueDescription = document.getElementById('issue_description')
+        let issueDTrackerId = document.getElementById('issue_tracker_id')
 
-        //this.loadedTemplate = obj
-        let loadedSelector = obj
-
-        // ТЕСТ
-        /*
-        let parsedData =  {"ttw_cats":[
-                          {"id":1,"category":"Can you see this","sub_category":["One","Two","Three","Four"]},
-                          {"id":2,"category":"Last Us","sub_category":["A live","To Death","Posible exist","Are you seek?"],"enable":true},
-                          {"id":3,"category":"Other Type","sub_category":[],"enable":false},
-                          {"id":7,"category":"Коробка","sub_category":["Конфигурация"],"enable":true},
-                          {"id":6,"category":"Ролевой доступ","sub_category":["Доступ к моделям","Комбинирование ролей","Модель отображения","Модель действий"],"enable":true},
-                          {"id":8,"category":"тест","sub_category":["привет","лада"],"enable":true},
-                          {"id":5,"category":"Шаблоны","sub_category":[],"enable":true}]}
-        
-        let string2 = '[Ролевой доступ][Комбинирование ролей ] Создать новые роли в топик'
-        */
+        // Parsing Subject
         let string2 = issueSubject.value
 
         let tempCategory =''
@@ -95,8 +90,7 @@ function startTTW(event, baseUrl, projectId, isTemplatesEnabled) {
         }
         console.log(tempCategory, tempSubCategory, strClearTheme)
 
-        // контент готов
-
+        // Content ready
         let strTextarea = strClearTheme
 
         let tmplm = ''
@@ -104,13 +98,15 @@ function startTTW(event, baseUrl, projectId, isTemplatesEnabled) {
         let subSelect = []
 
         if (Array.isArray(loadedSelector) && loadedSelector.length !=0){
+            
+            // Prepare view subject selectors
 
             let elSelect = '<select class="uk-select" id="ttw-selector-category">'
             let elSelected = ''
             let elSubSelected = ''
             let elSelectedId = -1
             loadedSelector.forEach(function (selCategory, i) {
-                if (selCategory.enable === true || selCategory.enable === undefined) {
+            if (selCategory.enable === true || selCategory.enable === undefined) {
                 //elSelected =  selCategory.category === tempCategory ? 'selected' : ''
                 if (selCategory.category === tempCategory){
                     elSelected = 'selected'
@@ -137,7 +133,23 @@ function startTTW(event, baseUrl, projectId, isTemplatesEnabled) {
             elSelect += '</select>'
 
             let subCategory = elSelectedId != -1 ? subSelect.find(suber => suber[0] == elSelectedId ) : subSelect[0]
-            
+
+            // prepare templates view
+
+            let elSelectedTemplate = ''
+            if(isTemplatesEnabled && Array.isArray(loadedTemplates) && loadedTemplates.length !=0){
+                elSelectedTemplate = '<select class="uk-select uk-form-width-large" id="ttw-selector-templates">'
+                loadedTemplates.forEach(function (selTemplate, i) {
+                if (selTemplate.enable === true || selTemplate.enable === undefined) {
+
+                    elSelectedTemplate += '<option value="' + selTemplate.id + '">' + selTemplate.name + '</option>'
+                    }
+                })
+                elSelectedTemplate += '</select>'
+            }
+
+            let elSelectedTemplateInfo = elSelectedTemplate.replace("ttw-selector-templates","ttw-selector-templates-info")
+
             tmplm = `
             <button class="uk-modal-close-default" type="button" uk-close></button>
             <div class="ttw-text">
@@ -146,24 +158,46 @@ function startTTW(event, baseUrl, projectId, isTemplatesEnabled) {
             <div class="uk-form-stacked">
             <ul uk-tab>
                 <li><a href="#">Тема</a></li>
-                ${isTemplatesEnabled ? `<li><a href="#">Шаблон</a></li>` : ''}
+                ${isTemplatesEnabled ? `<li><a href="#">Шаблон</a></li>` : ''} <!--onclick="$ {clickTemplateTab()-->
             </ul>
             <ul class="uk-switcher uk-margin">
                 <li>
                     <fieldset class="uk-fieldset" id="ttw-modal-fieldset-theme">
-                        <legend class="uk-legend" style="font-size: 1.2rem;">Выберете категорию:</legend>
-                        <div class="uk-margin">${elSelect}</div>
-                        <div class="uk-margin" id="ttw-selector-subcategory">${subCategory[1]}</div>
+                        <!--<legend class="uk-legend" style="font-size: 1.2rem;">Выберете категорию:</legend>-->
                         <div class="uk-margin">
-                        <label class="uk-form-label" for="form-stacked-text">Текст темы:</label>
-                        <div class="uk-form-controls">
-                            <textarea class="uk-textarea" rows="3" placeholder="Тема" id="ttw-textarea-theme" value="${strTextarea}">${strTextarea}</textarea>
+                        <label class="uk-form-label" for="form-stacked-text">Выберете категорию:</label>
+                            ${elSelect}
                         </div>
+                            <div class="uk-margin" id="ttw-selector-subcategory">${subCategory[1]}</div>
+                        <div class="uk-margin">
+                            <label class="uk-form-label" for="form-stacked-text">Текст темы:</label>
+                            <div class="uk-form-controls">
+                                <textarea class="uk-textarea" rows="3" placeholder="Тема" id="ttw-textarea-theme" value="${strTextarea}" autofocus>${strTextarea}</textarea>
+                            </div>
                         </div>
-                    </fieldset>
+                        ${isTemplatesEnabled ? `
+                        <div class="uk-margin">
+                            <label class="uk-form-label" for="form-stacked-text">Применить шаблон:</label>
+                            <div class="uk-form-controls">
+                            <div class="uk-inline checkbox-apply">
+                            ${elSelectedTemplate}
+                            <span uk-tooltip="title: Применить шаблон к описанию задачи; pos: top-right; delay: 800">
+                            <input class="uk-checkbox ttw-checkbox" style="font-size: 1.5rem;" type="checkbox" id="ttw-template-apply">
+                            </span>
+                            </div>
+                            </div>
+                        </div>` : ''}
+                     </fieldset>
                 </li>
                 ${isTemplatesEnabled ? `<li>
                     <legend class="uk-legend" style="font-size: 1.2rem;">Выберете шаблон:</legend>
+                    <div class="uk-margin">
+                        <div class="uk-inline">
+                        <button class="uk-form-icon uk-form-icon button-info" uk-icon="icon: info" type="button" id="ttw-template-info-btn"></button>
+                        ${elSelectedTemplateInfo}    
+                        </div>        
+                    </div>
+                    <span id="ttw-template-info-tmpl"></span>
                 </li>` : ''}
             </ul>
             </div>
@@ -181,103 +215,208 @@ function startTTW(event, baseUrl, projectId, isTemplatesEnabled) {
         let textarea
         let selector
         let fieldset
+        let btnInfo
+        //let tooltip
+        let selectorTemplateInfo
+        let templateInfoContent
         let listenerTextareaPaste
         let listenerTextareaInput
         let listenerSelectorCategory
         let listenerTextareaKeyDown
+        let listenerConfirmButton
+        let listenerInfoButton
+        let listenerSelectorTemplateInfoClick
+        let templateApplyChkBox
+        let isStopDropDown = false
+        let firstClickOnSelect = true
 
-        //const modal = UIkit.modal.confirm(tmplm, { labels: { ok: 'Применить', cancel: 'Отмена' }, stack: true }).then(function() {
-        const modal = UIkit.modal.confirm(tmplm, { labels: { ok: 'Применить', cancel: 'Отмена' }, stack: true, 'bgClose': true })
-        const el = modal.dialog.$el
-        let btnOk = el.getElementsByClassName('uk-button-primary')[0]
-        btnOk.disabled = !isValidSummaryString(strClearTheme)
+        UIkit.util.ready(function() {
+            const modal = UIkit.modal.confirm(tmplm, { labels: { ok: 'Применить', cancel: 'Отмена' }, stack: true, 'bgClose': true })
+            const el = modal.dialog.$el
+            //const el = modal.$el
+            let btnOk = el.getElementsByClassName('uk-button-primary')[0]
+            btnOk.disabled = !isValidSummaryString(strClearTheme)
 
-        if (isLoadedSelector){
 
-            textarea = document.body.querySelector('#ttw-textarea-theme')
-            selector = document.body.querySelector('#ttw-selector-category')
-            fieldset = el.querySelector('#ttw-modal-fieldset-theme')
 
-            listenerTextareaPaste = function(e) {
-                let clipboardData
-                let pastedData
-                e.stopPropagation()
-                e.preventDefault()
-                clipboardData = e.clipboardData || window.clipboardData
-                pastedData = avoidHTML(clipboardData.getData('Text'))
-                pastedData = pastedData.replace( /[\t\r\n]/g, " " )
-                pastedData = pastedData.slice(0, maxlength - getFieldString(fieldset, loadedSelector).length)
-                if (pastedData.length !=0) textarea.value = pastedData
-            }
-            
-            listenerTextareaInput = function(e) {
-                btnOk.disabled = !isValidSummaryString(textarea.value)
-            }
+            if (isLoadedSelector){
 
-            listenerTextareaKeyDown = function(event) {
-                let key = event.key
-                if (key == 'Home' || key == 'Delete' || key == 'Backspace' || key == 'ArrowLeft' || key == 'ArrowRight'  || key == 'End' || key == 'ArrowUp' || key == 'ArrowDown') return
+                textarea = el.querySelector('#ttw-textarea-theme')
+                selector = el.querySelector('#ttw-selector-category')
+                fieldset = el.querySelector('#ttw-modal-fieldset-theme')
+                btnInfo  = el.querySelector('#ttw-template-info-btn')
+                templateInfoContent = el.querySelector('#ttw-template-info-tmpl')
+                selectorTemplateInfo = el.querySelector('#ttw-selector-templates-info')
+                templateApplyChkBox = el.querySelector('#ttw-template-apply')
+
                 
-                if (textarea.value.length > maxlength - getFieldString(fieldset, loadedSelector).length - 1) {
-                //textarea.value = textarea.value.slice(0, -1)
-                event.preventDefault()
-                event.stopPropagation()
+
+                // тултип
+                //tooltip = UIkit.tooltip(templateApplyChkBox, { title: 'Применить шаблон к описанию задачи', container: '.checkbox-apply', pos: 'top-right' })//.show() //, container: '.checkbox-apply'
+
+                listenerTextareaPaste = function(event) {
+                    let clipboardData
+                    let pastedData
+                    event.stopPropagation()
+                    event.preventDefault()
+                    clipboardData = e.clipboardData || window.clipboardData
+                    pastedData = avoidHTML(clipboardData.getData('Text'))
+                    pastedData = pastedData.replace( /[\t\r\n]/g, " " )
+                    pastedData = pastedData.slice(0, maxlength - getFieldString(fieldset, loadedSelector).length)
+                    if (pastedData.length !=0) textarea.value = pastedData
                 }
-            }
-            
-            listenerSelectorCategory = function(event){
-                for (let opt of event.target.children) {
-                    if (opt.selected) {
-                        let subSelector = subSelect.find(suber => suber[0] == opt.value )
-                        document.querySelector('#ttw-selector-subcategory').innerHTML = subSelector[1]
-                        break
+                
+                listenerTextareaInput = function(e) {
+                    btnOk.disabled = !isValidSummaryString(textarea.value)
+                }
+
+                listenerTextareaKeyDown = function(event) {
+                    let key = event.key
+                    if (key == 'Home' || key == 'Delete' || key == 'Backspace' || key == 'ArrowLeft' || key == 'ArrowRight'  || key == 'End' || key == 'ArrowUp' || key == 'ArrowDown') return
+                    
+                    if (textarea.value.length > maxlength - getFieldString(fieldset, loadedSelector).length - 1) {
+                    //textarea.value = textarea.value.slice(0, -1)
+                    event.preventDefault()
+                    event.stopPropagation()
                     }
                 }
+                
+                listenerSelectorCategory = function(event){
+                    for (let opt of event.target.children) {
+                        if (opt.selected) {
+                            let subSelector = subSelect.find(suber => suber[0] == opt.value )
+                            document.querySelector('#ttw-selector-subcategory').innerHTML = subSelector[1]
+                            break
+                        }
+                    }
+                }
+
+                // Confirm button press (apply changes to redmine)
+                listenerConfirmButton = function(event) {
+                    if (13 == event.keyCode || event.which == 1 ) {
+                        // Apply issue Subject
+                        applyChanges(issueSubject, getSummaryString(fieldset , isValidSummaryString(textarea.value) ? textarea.value.trim() : strClearTheme, loadedSelector))
+                        if (isTemplatesEnabled && templateApplyChkBox.checked){
+                            // Apply templates to issue description and tracker
+                            let issue = loadedTemplates.find(tmpl => tmpl.id == selectorTemplateInfo.value )
+                            if (issue !== undefined && issue.description !== undefined && issue.description.length != 0){
+                                issueDescription.innerHTML = issue.description
+                                let tracker = loadedTrackers.find(tmpl => tmpl.id == issue.tracker_id)
+                                if (tracker !== undefined && tracker.id !== undefined && tracker.id.length != 0)  issueDTrackerId.value = tracker.id
+                            }
+                            //console.log('Template')
+                        }
+                        UIkit.notification("Темазатор применён", {status: 'primary', timeout: 750})
+                    }
+                }
+
+                listenerSelectorTemplateInfoClick = function(event){
+                    // Манипуляция с UikitDrop и Select
+                    if (firstClickOnSelect){
+                        firstClickOnSelect = !firstClickOnSelect
+                        isStopDropDown = false
+                        return
+                    }
+                    isStopDropDown = true
+                }
+
+                listenerInfoButton = function(event){
+                    event.preventDefault()
+                    event.stopPropagation()
+                    if (isLoadedSelector){
+        
+                    
+                    let selectedTemplate_id = selectorTemplateInfo.value
+                    let tmpl_template = loadedTemplates.find(tmpl => tmpl.id == selectedTemplate_id )
+                    let tmpl_tracker = loadedTrackers.find(tmpl => tmpl.id == tmpl_template.tracker_id)
+                    tmpl_tracker = tmpl_tracker.name
+
+                    let view_tmpl = `
+                    <div class="uk-card uk-card-body uk-card-default" id="ttw-view-tmpl">
+                        <div class="uk-margin">
+                            <!-- <label class="uk-form-label" for="form-stacked-text">Имя шаблона:</label>-->
+                            <h3 class="uk-card-title">${tmpl_template.name}</h3>
+                        </div>
+                        <div class="uk-margin">
+                            <label class="uk-form-label" for="form-stacked-text ">Трекер:</label>
+                            <div class="uk-form-control uk-text-primary">
+                                ${tmpl_tracker}
+                            </div>
+                        </div>
+                        <div class="uk-margin">
+                            <label class="uk-form-label" for="form-stacked-text">Описание:</label>
+                            <div class="uk-form-controls">
+                                ${tmpl_template.description}
+                            </div>
+                        </div>
+                    </div>`
+
+                    templateInfoContent.innerHTML = view_tmpl
+                    UIkit.drop('#ttw-template-info-tmpl', {mode: 'click', animation: 'uk-animation-slide-top-small', duration: 500}).show()
+                    }
+                }
+
+                selector.addEventListener('change', listenerSelectorCategory, false)
+                textarea.addEventListener('paste',  listenerTextareaPaste, false)
+                textarea.addEventListener('input',  listenerTextareaInput, false)
+                textarea.addEventListener('keydown', listenerTextareaKeyDown, false)
+                btnOk.addEventListener('click', listenerConfirmButton, false)
+                isTemplatesEnabled && btnInfo.addEventListener('click', listenerInfoButton, false)
+                isTemplatesEnabled && selectorTemplateInfo.addEventListener('click', listenerSelectorTemplateInfoClick, false)
+
+            }
+            // Заглушка Promise
+            modal.then(function() {
+                //console.log('Confirmed.')
+            }, function () {
+                //console.log('Rejected.')
+            })
+
+            function isValidSummaryStringMaxLength(val){
+                if(isLoadedSelector && fieldset !== undefined){
+                    let hLen = getFieldString(fieldset, loadedSelector).length  + val.length - 1
+                    return hLen <= maxlength
+                }
+                else return val.length >= 10
             }
 
-            selector.addEventListener('change', listenerSelectorCategory, false)
-            textarea.addEventListener('paste',  listenerTextareaPaste, false)
-            textarea.addEventListener('input',  listenerTextareaInput, false)
-            textarea.addEventListener('keydown', listenerTextareaKeyDown, false)
-        }
-
-        modal.then(function() {
-            //console.log('Confirmed.')
-            applyChanges(issueSubject, getSummaryString(fieldset , isValidSummaryString(textarea.value) ? textarea.value.trim() : strClearTheme, loadedSelector))
-            UIkit.notification("Темазатор применён", {status: 'primary', timeout: 750})
-        }, function () {
-            //console.log('Rejected.')
-            if (isLoadedSelector){
-                try {
-                    selector.removeEventListener('change', listenerSelectorCategory, false)
-                    textarea.removeEventListener('paste', listenerTextareaPaste, false)
-                    textarea.removeEventListener('input',  listenerTextareaInput, false)
-                    textarea.removeEventListener('keydown', listenerTextareaKeyDown, false)
-                }
-                catch (e){
-                    console.log('error - cant remove listeners ' + e)
-                }
+            function isValidSummaryString(val){
+                return isValid(val) && isValidSummaryStringMaxLength(val)
             }
+
+            UIkit.util.on(el, 'hide', function(event) {
+                // Если это закрытие модала - продолжить
+                if (event.target === el && isLoadedSelector){ 
+                //component.$destroy(true)
+                    try {
+                        selector.removeEventListener('change', listenerSelectorCategory, false)
+                        textarea.removeEventListener('paste', listenerTextareaPaste, false)
+                        textarea.removeEventListener('input',  listenerTextareaInput, false)
+                        textarea.removeEventListener('keydown', listenerTextareaKeyDown, false)
+                        btnOk.removeEventListener('click', listenerConfirmButton, false)
+                        isTemplatesEnabled && btnInfo.removeEventListener('click', listenerInfoButton, false)
+                        isTemplatesEnabled && selectorTemplateInfo.removeEventListener('click', listenerSelectorTemplateInfoClick, false)
+                    }
+                    catch (e){
+                        console.log('error - cant remove listeners ' + e)
+                    }
+                }
+            })
+
+            UIkit.util.on(el, 'beforeshow', function(event) {
+                //let target = event.target
+                if (event.target === templateInfoContent){ 
+                    // Это UikitDown? - отменить показ при нажатии на селектор
+                    isStopDropDown && event.preventDefault()
+                    isStopDropDown = false
+                    return
+                }
+            })
         })
-
-        /* modal hide event */
-        // UIkit.util.on('#my-id', 'show', function () {
-        //   //console.log("do something");
-        //   UIkit.notification('Card has been moved.', 'success');
-        // });
-        function isValidSummaryStringMaxLength(val){
-            if(isLoadedSelector && fieldset !== undefined){
-                let hLen = getFieldString(fieldset, loadedSelector).length  + val.length - 1
-                return hLen <= maxlength
-            }
-            else return val.length >= 10
-        }
-
-        function isValidSummaryString(val){
-            return isValid(val) && isValidSummaryStringMaxLength(val)
-        }
     })
 }
+
+
 
 function getCsrfToken() {
     const metas = document.getElementsByTagName('meta')
@@ -304,7 +443,6 @@ function getSummaryString (fieldset, strClearTheme, selectors){
 
 function applyChanges(subject, val){
     subject.value = val
-    console.log('Apply')
 }
 
 function avoidHTML(text){

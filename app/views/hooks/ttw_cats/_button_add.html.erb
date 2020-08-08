@@ -5,7 +5,7 @@
                 <%= l(:label_ttw_issue_info) %>
             </td>
             <td style="text-align: right; padding-right: 30px;" class='ttw_table_right'>
-                <button class="template_box ttw-btn ttw-btn-primary ttw-btn-large" onclick="startTTW(event, baseUrl, projectId, isTemplatesEnabled)">
+                <button class="template_box ttw-btn ttw-btn-primary ttw-btn-large" onclick="document.activeElement.blur(); startTTW(event, baseUrl, projectId, isTemplatesEnabled)">
                 <%= l(:label_ttw_btn_start_theme) %>
                 </button>
             </td>
@@ -24,6 +24,7 @@
   </script>
 
   <%= javascript_include_tag('uikit.min', plugin: 'task_theme_wizard') %>
+  <%= javascript_include_tag('uikit-icons.min', plugin: 'task_theme_wizard') %>
   <%= javascript_include_tag('theme_selector', plugin: 'task_theme_wizard') %>
 <% content_for :header_tags do %>
     <%#= stylesheet_link_tag 'uikit.min', :plugin => 'task_theme_wizard' %>

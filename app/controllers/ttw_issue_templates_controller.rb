@@ -11,6 +11,7 @@ class TtwIssueTemplatesController < ApplicationController
 
     def index
       @ttw_issue_templates = TtwIssueTemplate.sorted.to_a
+      @ttw_trackers = Tracker.all
       respond_to do |format|
         format.html { render :layout => false if request.xhr? }
         format.api
@@ -41,6 +42,7 @@ class TtwIssueTemplatesController < ApplicationController
     end
   
     def update
+      @ttw_trackers = Tracker.all
       @ttw_issue_template = TtwIssueTemplate.find(params[:id])
       if @ttw_issue_template.update_attributes(ttw_params)
         respond_to do |format|
@@ -88,7 +90,7 @@ class TtwIssueTemplatesController < ApplicationController
     private
   
     def ttw_params
-      params.require(:ttw_issue_template).permit(:name, :description, :tracker_str, :enabled)
+      params.require(:ttw_issue_template).permit(:name, :description, :tracker_id, :enabled)
     end
  
     def plugin_setting
@@ -96,7 +98,7 @@ class TtwIssueTemplatesController < ApplicationController
     end
 
     def find_tracker
-      @tracker = Tracker.find(params[:issue_tracker_id])
+      @tracker = Tracker.find(params[:tracker_id])
     end
 
     def find_project

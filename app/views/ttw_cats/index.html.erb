@@ -58,22 +58,13 @@
       </td>
       </tr>
     <% end %>
-      <!-- 
-        
-        
-        <tr class="<%#= cycle("odd", "even") %>">
-      <td class="category"><%#= l(:label_other) %></td>
-      <td class="color"><%#= l(:label_uncategorized) %></td>
-      <td class="count"><%#= uncategorized_attachments_count %></td>
-      <td class="buttons">&nbsp;</td>
-      </tr>-->
       <%#= reorder_handle(cat) %>
-      <tr class="<%#= cycle("odd", "even") %>">
-      <td class="category"><%=l(:label_ttw_total)%></td>
+      <!-- <tr class="<%#= cycle("odd", "even") %>">
+      <td class="category"><%#=l(:label_ttw_total)%></td>
       <td class="tag"><div>&nbsp;</div></td>
       <td class="tag"><div>&nbsp;</div></td>
-      <td class="tag"><%= ttw_count %></td>
-      </tr>
+      <td class="tag"><%#= ttw_count %></td>
+      </tr> -->
       </tbody>
     </table>
     </div>

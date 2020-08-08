@@ -1,33 +1,24 @@
 <%= error_messages_for 'ttw_issue_template' %>
-<!-- <div class="splitcontentleft"> -->
 <div class='box tabular box-white'>
-
-<p><%= f.text_field :name, :required => true, size: 64, label: l(:label_ttw_issue_template_name) %></p>
-
-<!-- <p><%#= f.text_field :tracker_str, :required => true, size: 32 %> </p>  -->
-
-<p>
-<%= f.select :tracker_str, @ttw_trackers.collect { |t| [t.name, t.id] }, { required: true },
-required: true, label: l(:label_tracker) %> <!--, selected: issue_template.tracker.id %>-->
-</p>
-
-<p>
-    <%= content_tag 'span', :id => "issue_description_and_toolbar" do %>
-        <%= f.text_area :description,
-                       :cols => 78,
-                       :rows => (@ttw_issue_template.description.blank? ? 10 : [[10, @ttw_issue_template.description.length / 50].max, 100].min),
-                       :accesskey => accesskey(:edit),
-                       :class => 'wiki-edit',
-                       :style => 'overflow: auto;',
-                       :required => true,
-                       :no_label => true %>
-      <% end %>
-</p>
-
-<%= wikitoolbar_for 'ttw_issue_template_description' %>
-
-<p><%= f.check_box :enabled %></p>
-
+    <p><%= f.text_field :name, :required => true, size: 64, label: l(:label_ttw_issue_template_name) %></p>
+    <!-- <p><%#= f.text_field :tracker_str, :required => true, size: 32 %> </p>  -->
+    <p>
+        <%= f.select :tracker_id, @ttw_trackers.collect { |t| [t.name, t.id] }, { required: true }, 
+        required: true, label: l(:label_tracker), selected: @ttw_issue_template.tracker_id %>
+    </p>
+    <p>
+        <%= content_tag 'span', :id => "issue_description_and_toolbar" do %>
+            <%= f.text_area :description,
+                        :cols => 78,
+                        :rows => (@ttw_issue_template.description.blank? ? 10 : [[10, @ttw_issue_template.description.length / 50].max, 100].min),
+                        :accesskey => accesskey(:edit),
+                        :class => 'wiki-edit',
+                        :style => 'overflow: auto;',
+                        :required => true,
+                        :no_label => true %>
+        <% end %>
+    </p>
+    <%= wikitoolbar_for 'ttw_issue_template_description' %>
+    <p><%= f.check_box :enabled %></p>
 </div>
 <p><%= submit_tag l(:button_save) %></p>
-<!-- </div> -->

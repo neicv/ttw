@@ -61,30 +61,36 @@ class TtwCatsController < ApplicationController
   end
 
   def list_themes
+    @ttw_issue_templates = TtwIssueTemplate.sorted.to_a
+    @ttw_trackers = Tracker.sorted.to_a
     @ttw_cats = TtwCat.sorted.to_a
     respond_to do |format|
       format.html do
         render action: '_list_themes',
                layout: false,
                locals: { ttw_cats: @ttw_cats,
+                        ttw_issue_templates: @ttw_issue_templates,
+                        ttw_trackers: @ttw_trackers
                         }
       end
       format.api do
         render action: '_list_themes',
                layout: false,
                locals: { ttw_cats: @ttw_cats,
+                        ttw_issue_templates: @ttw_issue_templates,
+                        ttw_trackers: @ttw_trackers
                         }
       end
 
-      format.json { render json: @ttw_cats }
-      #format.json { render :json => @ttw_cats}
-
-      # format.json do
-      #   render action: '_list_themes',
-      #          layout: false,
-      #          locals: { ttw_cats: @ttw_cats,
-      #                   }
-      # end
+      #format.json { render json: @ttw_cats }
+      format.json do
+        render action: '_list_themes',
+               layout: false,
+               locals: { ttw_cats: @ttw_cats,
+                        ttw_issue_templates: @ttw_issue_templates,
+                        ttw_trackers: @ttw_trackers
+                        }
+      end
     end
   end
 

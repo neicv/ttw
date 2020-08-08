@@ -63,3 +63,43 @@ td .ttw_table_right {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     font-size: 16px;
 }
+
+.ttw-checkbox {
+  margin-left: 12px !important;
+}
+
+.ttw-checkbox.uk-checkbox{
+  height: 20px;
+  width: 20px;
+  margin-top: -2px;
+}
+
+.uk-tooltip {
+  /* 1 */
+  display: none;
+  /* 2 */
+  position: absolute;
+  z-index: 10501;
+  /* 3 */
+  top: 0;
+  /* 4 */
+  box-sizing: border-box;
+  max-width: 200px;
+  padding: 3px 6px;
+  /* 5 */
+  background: #777;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 12px;
+}
+
+.uk-form-icon:not(.uk-form-icon-flip) + .uk-select {
+    padding-left: 40px !important;
+}
+
+.button-info button:active, button:focus {
+  outline: none !important;
+}
+.button-info button::-moz-focus-inner {
+  border: 0 !important;
+}

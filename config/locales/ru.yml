@@ -11,6 +11,7 @@ ru:
   field_sub_category: "Подкатегория"
   field_enabled: "Доступна"
   field_tracker_str: "Трекер"
+  field_template_enabled: "Доступен"
   label_ttw_this_category: "Активна"
   error_unable_delete_category: "Невозможно удалить категорию"
   text_ttw_sub_categoies_info: "По одному значению в каждой строке"

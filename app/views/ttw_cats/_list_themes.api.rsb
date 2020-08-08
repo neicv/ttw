@@ -8,3 +8,22 @@ api.array :ttw_cats do
     end
   end
 end
+api.array :ttw_issue_templates do
+  @ttw_issue_templates.each do |issue_template|
+    api.issue_template do
+      api.id issue_template.id
+      api.name issue_template.name
+      api.description issue_template.description
+      api.tracker_id issue_template.tracker_id
+      api.enable issue_template.enabled
+    end
+  end
+end
+api.array :ttw_trackers do
+  @ttw_trackers.each do |tracker|
+    api.tracker do
+      api.id tracker.id
+      api.name tracker.name
+    end
+  end
+end

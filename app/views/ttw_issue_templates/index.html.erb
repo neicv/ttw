@@ -2,9 +2,8 @@
     <%= link_to l(:label_settings),
                   { controller: 'settings', action: 'plugin', id: 'task_theme_wizard' },
                   :class => 'icon icon-projects' %> 
-                  <!--settings-->
-</div>
 
+</div>
 <div class="contextual">
     <%= link_to l(:label_ttw_new_templates),
                     { controller: 'ttw_issue_templates', action: 'new', project_id: @project },
@@ -32,7 +31,7 @@
       <th><%=l(:field_name)%></th>
       <th><%=l(:field_description)%></th>
       <th><%=l(:field_tracker)%></th>
-      <th><%=l(:field_enabled)%></th>
+      <th><%=l(:field_template_enabled)%></th>
       <th></th>
       </tr></thead>
       <tbody>
@@ -40,7 +39,7 @@
         <tr class="<%= cycle("odd", "even") %>">
         <td class="category"><%= link_to issue_template.name, edit_ttw_issue_template_path(issue_template) %></td>
         <td class="tag"><%= issue_template.description[0, 64] << " ..." %></td>
-        <td class="tag"><%= issue_template.tracker_str %></td>
+        <td class="tag"> <%= @ttw_trackers.find(issue_template.tracker_id) %></td>
 
         <td class="tag"> <%= check_box_tag 'issue_template[enabled]', 1, issue_template.enabled?, :disabled => true, :readonly => true %></td> 
         <td class="buttons">

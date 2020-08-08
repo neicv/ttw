@@ -1,1 +1,8 @@
 assets/fonts/robotonew-lightitalic
+/app/controllers/concer/task_theme_wizard_common.rb
+/assets/images/ttw.jpg
+/assets/javascripts/uikit-icons.min.js
+/assets/javascripts/uikit.min.js
+/assets/stylesheets/uikit_ttw.min.css
+/db/migrate/old/20140330125030_remove_tracker_str_from_ttw_issue_templates.rb.old
+/db/migrate/old/20140330125334_add_tracker_id_to_ttw_issue_templates.rb.old
