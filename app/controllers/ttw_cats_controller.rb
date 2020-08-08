@@ -5,8 +5,8 @@ class TtwCatsController < ApplicationController
   # self.main_menu = false
 
   #before_filter :global_authorize, :authorize
-  before_filter :require_admin, :except => :index, :except => :list_themes
-  before_filter :require_admin_or_api_request, :only => :index
+  before_action :require_admin, :except => :index, :except => :list_themes
+  before_action :require_admin_or_api_request, :only => :index
   accept_api_auth :index, :list_themes, :load
 
   helper :task_theme_wizard
@@ -61,9 +61,9 @@ class TtwCatsController < ApplicationController
   end
 
   def list_themes
-    @ttw_issue_templates = TtwIssueTemplate.sorted.to_a
-    @ttw_trackers = Tracker.sorted.to_a
-    @ttw_cats = TtwCat.sorted.to_a
+    @ttw_issue_templates = TtwIssueTemplate.enabled.sorted.to_a
+    @ttw_trackers = Tracker.sorted.to_a 
+    @ttw_cats = TtwCat.enabled.sorted.to_a
     respond_to do |format|
       format.html do
         render action: '_list_themes',
@@ -118,5 +118,9 @@ class TtwCatsController < ApplicationController
 
   def plugin_setting
     Setting.plugin_task_theme_wizard
+  end
+
+  def enabled?
+    enabled
   end
 end

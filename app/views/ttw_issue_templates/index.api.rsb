@@ -5,7 +5,7 @@ api.array :ttw_issue_templates do
       api.name issue_template.name
       api.description issue_template.description
       api.tracker_id issue_template.tracker_id
-      api.enable issue_template.enabled
+      api.enabled issue_template.enabled
     end
   end
 end

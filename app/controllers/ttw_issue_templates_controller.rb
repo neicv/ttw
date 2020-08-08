@@ -3,8 +3,8 @@ class TtwIssueTemplatesController < ApplicationController
   
     layout 'admin'
 
-    before_filter :require_admin, :except => :index, :except => :list_templates
-    before_filter :require_admin_or_api_request, :only => :index
+    before_action :require_admin, :except => :index, :except => :list_templates
+    before_action :require_admin_or_api_request, :only => :index
     accept_api_auth :index, :list_templates, :load
 
   
@@ -107,5 +107,8 @@ class TtwIssueTemplatesController < ApplicationController
       render_404
     end 
 
+    def enabled?
+      enabled
+    end
   end
   

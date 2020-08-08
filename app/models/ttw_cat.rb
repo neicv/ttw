@@ -9,7 +9,7 @@ class TtwCat < ActiveRecord::Base
   serialize :sub_category
 
   scope :sorted, lambda { order(:category) }
-
+  scope :enabled, -> { where(enabled: true) }
 
   def to_s; category end
 

@@ -13,6 +13,7 @@ class TtwIssueTemplate < ActiveRecord::Base
                     'enabled'
     
     scope :sorted, lambda { order(:name) }
+    scope :enabled, -> { where(enabled: true) }
 
     def to_s; name end
   end

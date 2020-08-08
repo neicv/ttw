@@ -98,7 +98,7 @@ function startTTW(event, baseUrl, projectId, isTemplatesEnabled) {
         let subSelect = []
 
         if (Array.isArray(loadedSelector) && loadedSelector.length !=0){
-            
+
             // Prepare view subject selectors
 
             let elSelect = '<select class="uk-select" id="ttw-selector-category">'
@@ -106,7 +106,7 @@ function startTTW(event, baseUrl, projectId, isTemplatesEnabled) {
             let elSubSelected = ''
             let elSelectedId = -1
             loadedSelector.forEach(function (selCategory, i) {
-            if (selCategory.enable === true || selCategory.enable === undefined) {
+            if (selCategory.enabled === true) {
                 //elSelected =  selCategory.category === tempCategory ? 'selected' : ''
                 if (selCategory.category === tempCategory){
                     elSelected = 'selected'
@@ -140,7 +140,7 @@ function startTTW(event, baseUrl, projectId, isTemplatesEnabled) {
             if(isTemplatesEnabled && Array.isArray(loadedTemplates) && loadedTemplates.length !=0){
                 elSelectedTemplate = '<select class="uk-select uk-form-width-large" id="ttw-selector-templates">'
                 loadedTemplates.forEach(function (selTemplate, i) {
-                if (selTemplate.enable === true || selTemplate.enable === undefined) {
+                if (selTemplate.enabled === true) {
 
                     elSelectedTemplate += '<option value="' + selTemplate.id + '">' + selTemplate.name + '</option>'
                     }
@@ -154,7 +154,7 @@ function startTTW(event, baseUrl, projectId, isTemplatesEnabled) {
             <button class="uk-modal-close-default" type="button" uk-close></button>
             <div class="ttw-text">
             <div class="" id="ttw-modal-themazator">
-            <h3 class="uk-h4">Темазатор</h3></div>
+            <h3 class="uk-h4">Темайзор</h3></div>
             <div class="uk-form-stacked">
             <ul uk-tab>
                 <li><a href="#">Тема</a></li>
@@ -248,8 +248,6 @@ function startTTW(event, baseUrl, projectId, isTemplatesEnabled) {
                 templateInfoContent = el.querySelector('#ttw-template-info-tmpl')
                 selectorTemplateInfo = el.querySelector('#ttw-selector-templates-info')
                 templateApplyChkBox = el.querySelector('#ttw-template-apply')
-
-                
 
                 // тултип
                 //tooltip = UIkit.tooltip(templateApplyChkBox, { title: 'Применить шаблон к описанию задачи', container: '.checkbox-apply', pos: 'top-right' })//.show() //, container: '.checkbox-apply'
@@ -385,7 +383,7 @@ function startTTW(event, baseUrl, projectId, isTemplatesEnabled) {
             }
 
             UIkit.util.on(el, 'hide', function(event) {
-                // Если это закрытие модала - продолжить
+                // If is close Modal.Window - dissmis eventListeners
                 if (event.target === el && isLoadedSelector){ 
                 //component.$destroy(true)
                     try {
@@ -415,7 +413,6 @@ function startTTW(event, baseUrl, projectId, isTemplatesEnabled) {
         })
     })
 }
-
 
 
 function getCsrfToken() {
