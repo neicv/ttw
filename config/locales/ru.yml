@@ -22,3 +22,6 @@ ru:
   label_ttw_issue_templates_plural: "Шаблонизатор"
   label_ttw_new_templates: "Добавить шаблон"
   label_ttw_issue_template_name: "Название шаблона"
+  label_ttw_settings_rest_api_key: "Rest API KEY"
+  label_ttw_settings_rest_api_key_description: "Api key"
+  label_ttw_settings_templates_enabled: "Использовать шаблоны задач"

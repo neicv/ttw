@@ -1,5 +1,16 @@
-<p>
-    <label for='label_settings_empty'><%= l(:label_setting_empty) %></label>
-    <%= hidden_field_tag('settings[empty]', 0, :id => nil).html_safe %>
-    <%= check_box_tag 'settings[empty]', true, @settings['empty'] == 'true' %>
-</p>
+<div class='form-inline'>
+  <fieldset>
+    <p>
+      <label for='settings_ttw_settings_empty'><%= l(:label_ttw_settings_templates_enabled) %></label>
+      <%= hidden_field_tag('settings[ttw_templates_enabled]', 0, :id => nil).html_safe %>
+      <%= check_box_tag 'settings[ttw_templates_enabled]', true, @settings['ttw_templates_enabled'] == 'true' %>
+    </p>
+
+    <% if Setting.rest_api_enabled? %>
+    <p>
+      <label for='settings_ttw_rest_api_key'><%= l(:label_api_access_key) %></label>
+      <%= text_field_tag('settings[ttw_api_key]', Setting.plugin_task_theme_wizard['ttw_api_key'], :size => 48, :placeholder => l(:label_ttw_settings_rest_api_key_description)) %> 
+    </p>
+    <% end %>
+  </fieldset>
+</div>

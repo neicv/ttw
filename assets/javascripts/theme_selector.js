@@ -1,21 +1,22 @@
-function startTTW(event, baseUrl, projectId, isTemplatesEnabled) {
+function startTTW(event, baseUrl, projectId = 1, isTemplatesEnabled = true, apiKey = '', base_builtin_fields) {
 
     event.preventDefault()
-    //let baseUrl = "http://localhost/redmine/ttw_cats/list_themes"
     let ns = this
-
     // redmine description field limitation
     const maxlength = 255
+
+    /*
+    //Если нужен REST API:
 
     window.fetch(baseUrl + '.json',
       {
         method: 'POST',
         credentials: 'same-origin',
-        mode: "no-cors",
+        //mode: "no-cors",
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-Token': ns.getCsrfToken()
-          //'X-CSRF-Token': getCsrfToken()
+          'X-CSRF-Token': ns.getCsrfToken(),
+          'X-Redmine-API-Key': apiKey
         },
         body: JSON.stringify({
           //template_id: selectedTemplate.value,
@@ -28,23 +29,26 @@ function startTTW(event, baseUrl, projectId, isTemplatesEnabled) {
       })
       .then((data) => {
         // NOTE: Workaround for GiHub Issue, to prevent overwrite with default template
-        // when operator submits new issue form without required field and returns
-        // with error message. If flash message #errorExplanation exists, not overwrited.
-        // (https://github.com/akiko-pusu/redmine_issue_templates/issues/50)
+
         if (document.querySelector('#errorExplanation') && document.querySelector('#errorExplanation')[0]) {
           document.querySelector('#errorExplanation')
           return
         }
-
+        */
         // Returned JSON may have the key some named 'global_template' or 'issue_template'
+
+        // Заглушка Rest API fetch JSON
+        let data = base_builtin_fields
 
         if (data === undefined || data.length == 0){
             UIkit.notification("Ошибка полуения списка категорий", {status: 'warning', timeout: 1000})
             return
         }
-        let parsedData = JSON.parse(data)
 
-        let isTemplatesEnabled = true
+        // Заглушка Rest API fetch JSON
+        let parsedData = base_builtin_fields
+        // Вернуть при снятии заглушки Rest
+        //let parsedData = JSON.parse(data)
 
         let templateKey = Object.keys(parsedData)[0]
         let loadedSelector = parsedData[templateKey]
@@ -411,7 +415,8 @@ function startTTW(event, baseUrl, projectId, isTemplatesEnabled) {
                 }
             })
         })
-    })
+    // Заглушка REST Api
+    //})
 }
 
 

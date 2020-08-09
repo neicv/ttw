@@ -10,6 +10,7 @@ download plugin and copy plugin folder task_theme_wizard go to Redmine's plugins
 go to redmine root folder
 
 bundle exec rake redmine:plugins:migrate RAILS_ENV=production NAME=task_theme_wizard
+(use --trace for detail info)
 
 restart server f.i.
 sudo /etc/init.d/apache2 restart
