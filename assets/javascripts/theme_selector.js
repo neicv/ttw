@@ -167,6 +167,18 @@ function startTTW(event, baseUrl, projectId = 1, isTemplatesEnabled = true, apiK
             <ul class="uk-switcher uk-margin">
                 <li>
                     <fieldset class="uk-fieldset" id="ttw-modal-fieldset-theme">
+                        ${isTemplatesEnabled ? `
+                        <div class="uk-margin">
+                            <label class="uk-form-label" for="form-stacked-text">Применить шаблон:</label>
+                            <div class="uk-form-controls">
+                            <div class="uk-inline checkbox-apply">
+                            ${elSelectedTemplate}
+                            <span uk-tooltip="title: Применить шаблон к описанию задачи; pos: top-right; delay: 500">
+                            <input class="uk-checkbox ttw-checkbox" style="font-size: 1.5rem;" type="checkbox" checked id="ttw-template-apply">
+                            </span>
+                            </div>
+                            </div>
+                        </div>` : ''}
                         <!--<legend class="uk-legend" style="font-size: 1.2rem;">Выберете категорию:</legend>-->
                         <div class="uk-margin">
                         <label class="uk-form-label" for="form-stacked-text">Выберете категорию:</label>
@@ -179,18 +191,6 @@ function startTTW(event, baseUrl, projectId = 1, isTemplatesEnabled = true, apiK
                                 <textarea class="uk-textarea" rows="3" placeholder="Тема" id="ttw-textarea-theme" value="${strTextarea}" autofocus>${strTextarea}</textarea>
                             </div>
                         </div>
-                        ${isTemplatesEnabled ? `
-                        <div class="uk-margin">
-                            <label class="uk-form-label" for="form-stacked-text">Применить шаблон:</label>
-                            <div class="uk-form-controls">
-                            <div class="uk-inline checkbox-apply">
-                            ${elSelectedTemplate}
-                            <span uk-tooltip="title: Применить шаблон к описанию задачи; pos: top-right; delay: 800">
-                            <input class="uk-checkbox ttw-checkbox" style="font-size: 1.5rem;" type="checkbox" id="ttw-template-apply">
-                            </span>
-                            </div>
-                            </div>
-                        </div>` : ''}
                      </fieldset>
                 </li>
                 ${isTemplatesEnabled ? `<li>
@@ -221,6 +221,7 @@ function startTTW(event, baseUrl, projectId = 1, isTemplatesEnabled = true, apiK
         let fieldset
         let btnInfo
         //let tooltip
+        let selectorTemplate
         let selectorTemplateInfo
         let templateInfoContent
         let listenerTextareaPaste
@@ -251,6 +252,7 @@ function startTTW(event, baseUrl, projectId = 1, isTemplatesEnabled = true, apiK
                 btnInfo  = el.querySelector('#ttw-template-info-btn')
                 templateInfoContent = el.querySelector('#ttw-template-info-tmpl')
                 selectorTemplateInfo = el.querySelector('#ttw-selector-templates-info')
+                selectorTemplate = el.querySelector('#ttw-selector-templates')
                 templateApplyChkBox = el.querySelector('#ttw-template-apply')
 
                 // тултип
@@ -300,7 +302,7 @@ function startTTW(event, baseUrl, projectId = 1, isTemplatesEnabled = true, apiK
                         applyChanges(issueSubject, getSummaryString(fieldset , isValidSummaryString(textarea.value) ? textarea.value.trim() : strClearTheme, loadedSelector))
                         if (isTemplatesEnabled && templateApplyChkBox.checked){
                             // Apply templates to issue description and tracker
-                            let issue = loadedTemplates.find(tmpl => tmpl.id == selectorTemplateInfo.value )
+                            let issue = loadedTemplates.find(tmpl => tmpl.id == selectorTemplate.value )
                             if (issue !== undefined && issue.description !== undefined && issue.description.length != 0){
                                 issueDescription.innerHTML = issue.description
                                 let tracker = loadedTrackers.find(tmpl => tmpl.id == issue.tracker_id)
