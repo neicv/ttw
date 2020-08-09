@@ -17,7 +17,7 @@ ru:
   error_unable_delete_category: "Невозможно удалить категорию"
   text_ttw_sub_categoies_info: "По одному значению в каждой строке"
   label_ttw_btn_start_theme: "Темайзер"
-  label_ttw_issue_info: "Используйте темазатор для заполнения темы задачи!"
+  label_ttw_issue_info: "Используйте темайзер для заполнения темы задачи!"
   label_ttw_issue_description: "Шаблон текста задачи"
   label_ttw_issue_templates_plural: "Шаблонизатор"
   label_ttw_new_templates: "Добавить шаблон"
