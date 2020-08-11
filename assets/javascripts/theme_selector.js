@@ -254,7 +254,6 @@ function startTTW(event, baseUrl, projectId = 1, isTemplatesEnabled = true, apiK
         let listenerTextareaInput
         let listenerSelectorCategory
         let listenerTextareaKeyDown
-        let listenerConfirmButton
         let listenerInfoButton
         let listenerSelectorTemplateInfoClick
         let templateApplyChkBox
@@ -328,14 +327,6 @@ function startTTW(event, baseUrl, projectId = 1, isTemplatesEnabled = true, apiK
                     }
                 }
 
-                // Confirm button press (apply changes to redmine)
-                listenerConfirmButton = function(e) {
-                    if (13 == e.keyCode || e.which == 1 ) {
-
-                        // remove to Uikit.on
-                    }
-                }
-
                 listenerSelectorTemplateInfoClick = function(event){
                     // Манипуляция с UikitDrop и Select
                     if (firstClickOnSelect){
@@ -386,7 +377,6 @@ function startTTW(event, baseUrl, projectId = 1, isTemplatesEnabled = true, apiK
                 textarea.addEventListener('paste',  listenerTextareaPaste, false)
                 textarea.addEventListener('input',  listenerTextareaInput, false)
                 textarea.addEventListener('keydown', listenerTextareaKeyDown, false)
-                //btnOk.addEventListener('click', listenerConfirmButton, false)
                 isTemplatesEnabled && btnInfo.addEventListener('click', listenerInfoButton, false)
                 isTemplatesEnabled && selectorTemplateInfo.addEventListener('click', listenerSelectorTemplateInfoClick, false)
             }
@@ -438,6 +428,7 @@ function startTTW(event, baseUrl, projectId = 1, isTemplatesEnabled = true, apiK
                 }
             })
 
+             // Confirm button press (apply changes to redmine)
             UIkit.util.on(btnOk, 'click', function (e) {
                 e.preventDefault()
                 e.stopPropagation()

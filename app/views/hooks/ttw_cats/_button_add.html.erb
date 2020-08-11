@@ -18,7 +18,6 @@
     const baseUrl = "<%= url_for(controller: 'ttw_cats', action: 'list_themes') %>"
     //const templateId = "<%#= issue_template&.id || '' %>"
     //const templateType = 'issue_template' 
-
     const base_builtin_fields = <%= ('{"ttw_cats":' << TtwCat.enabled.sorted.to_a.to_json).html_safe %>,
                                 <%= ('"ttw_issue_templates":' << TtwIssueTemplate.enabled.sorted.to_a.to_json).html_safe %>,
                                 <%= ('"ttw_ttw_trackers":' << Tracker.sorted.to_a.to_json).html_safe %>}
