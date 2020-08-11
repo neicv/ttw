@@ -1,3 +1,19 @@
+## 0.1.4 (August 11, 2020)
+
+### Added
+
+- Second Confirm dialog when template apllied to not empty description field
+- When start main dialog templates defenition on tracker 
+
+### Changed
+
+- Tabs 2 - no meaning "info"
+
+### Fixed
+
+- fix Apply Template: Set template description to not empty description field 
+
+
 ## 0.1.3 (August 09, 2020)
 
 ### Changed
