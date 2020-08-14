@@ -1,5 +1,6 @@
 class TtwCat < ActiveRecord::Base
   include Redmine::SubclassFactory
+  include Concerns::TtwCat::Common
   unloadable
   validates_presence_of :category
   validates_uniqueness_of :category
@@ -7,9 +8,13 @@ class TtwCat < ActiveRecord::Base
 
   validates_presence_of :sub_category
   serialize :sub_category
+  acts_as_list
 
-  scope :sorted, lambda { order(:category) }
+  scope :sorted, lambda { order(:position) }
+  #scope :sorted, lambda { order(:category) }
+  scope :named, lambda {|arg| where("LOWER(#{table_name}.name) = LOWER(?)", arg.to_s.strip)}
   scope :enabled, -> { where(enabled: true) }
+
 
   def to_s; category end
 

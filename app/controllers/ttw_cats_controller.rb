@@ -1,20 +1,22 @@
 class TtwCatsController < ApplicationController
-  unloadable
+  #unloadable
 
   layout 'admin'
   # self.main_menu = false
 
   #before_filter :global_authorize, :authorize
-  before_action :require_admin, :except => :index, :except => :list_themes
+  before_action :require_admin, :except => :index, :except => :list_themes, 
+      except: %i[move_order_higher move_order_lower move_order_to_top move_order_to_bottom move]
   before_action :require_admin_or_api_request, :only => :index
-  accept_api_auth :index, :list_themes, :load
+  accept_api_auth :index, :list_themes #, :load
+
 
   helper :task_theme_wizard
   include TaskThemeWizardHelper
   #include Concerns::TaskThemeWizardCommon
 
   def index
-    @ttw_cats = TtwCat.sorted.to_a
+    @ttw_cats = TtwCat.sorted
     respond_to do |format|
       format.html { render :layout => false if request.xhr? }
       format.api
@@ -105,7 +107,11 @@ class TtwCatsController < ApplicationController
   private
 
   def ttw_params
-    params.require(:ttw_cat).permit(:category, :sub_category, :enabled)
+    params.require(:ttw_cat).permit(:category, :sub_category, :enabled, :position)
+  end
+
+  def move
+    move_order(params[:to])
   end
 
   def global_authorize

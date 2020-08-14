@@ -1,3 +1,14 @@
+## 0.1.5 (August 14, 2020)
+
+### Added
+
+- Sorted Category on drag mode
+
+### Changed
+
+- List view categories (sub category now put into one string)
+
+
 ## 0.1.4 (August 11, 2020)
 
 ### Added

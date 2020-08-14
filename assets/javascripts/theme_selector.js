@@ -491,8 +491,10 @@ function startTTW(event, baseUrl, projectId = 1, isTemplatesEnabled = true, apiK
                                             }
                                         }
                                     }
+                                    applyDescription(typeC)
+                                    UIkit.notification("Темазатор применён", {status: 'primary', timeout: 750})
                                 }
-                                applyDescription(typeC)
+                                
                                 //destroy modals
                                 modalConfirm.hide()
                                 modal.hide()

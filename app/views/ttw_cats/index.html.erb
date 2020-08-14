@@ -27,19 +27,21 @@
 <% else %>
 
 <div class="ttw_category_box">
-    <table class="list ttw_categories">
+    <table class="list ttw_categories ui-sortable table-sortable">
       <thead><tr>
       <th><%=l(:field_name)%></th>
       <th><%=l(:field_sub_category)%></th>
       <th><%=l(:label_ttw_this_category)%></th>
+      <th><%=l(:button_sort)%></th>
+      <th></th>
       <th></th>
       </tr></thead>
-      <tbody>
+      <tbody class="ui-sortable">
     <% for cat in @ttw_cats %>
-      <tr class="<%= cycle("odd", "even") %>">
+      <tr class="<%= cycle('odd', 'even') %> ttw_cat">
       <td class="category"><%= link_to cat.category, edit_ttw_cat_path(cat) %></td>
       <td class="tag">
-        <%= cat.sub_category %>
+        <%= cat.sub_category.join(", ")[0, 64] << " ..." %>
         <!-- <table class="list ttw_categories">
           <tbody>
           <%# cat.sub_category.each do |scat| %>
@@ -52,12 +54,19 @@
       </td>
 
       <td class="tag"> <%= check_box_tag 'cat[enabled]', 1, cat.enabled?, :disabled => true, :readonly => true %></td> 
+
+      <!-- <td class="reorder"> -->
+        <%#= reorder_links('ttw_cat', {:action => 'update', :id => cat.id, :page => params[:page]}, :put) %>
+      <!-- </td> -->
+
+      <td class="buttons">
+        <%= reorder_handle(cat, :url => url_for({ controller: 'ttw_cats', :id => cat, :action =>'update' })) %>
+      </td>
       <td class="buttons">
         <%= delete_link ttw_cat_path(cat) %>
       </td>
       </tr>
     <% end %>
-      <%#= reorder_handle(cat) %>
       <!-- <tr class="<%#= cycle("odd", "even") %>">
       <td class="category"><%#=l(:label_ttw_total)%></td>
       <td class="tag"><div>&nbsp;</div></td>
@@ -70,6 +79,11 @@
 
 <% end %>
 
+<%= javascript_tag do %>
+  $(function() { $("table.table-sortable tbody").positionedItems(); })
+<% end %>
+
+<%= javascript_include_tag('theme_sortable', plugin: 'task_theme_wizard') %>
 <% content_for :header_tags do %>
     <%= stylesheet_link_tag 'task_theme_wizard', :plugin => 'task_theme_wizard' %>
 <% end %>

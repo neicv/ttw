@@ -17,7 +17,7 @@ Redmine::Plugin.register :task_theme_wizard do
   
     # permissions 
     project_module :task_theme_wizard do
-      permission :edit_task_theme_wizard, task_theme_wizard: %i[new create edit update destroy list_themes]
+      permission :edit_task_theme_wizard, task_theme_wizard: %i[new create edit update destroy move list_themes]
       permission :show_task_theme_wizard, task_theme_wizard: %i[index show load list_themes]
       permission :manage_task_theme_wizard, { task_theme_wizard_settings: %i[index edit] }, require: :member
   
