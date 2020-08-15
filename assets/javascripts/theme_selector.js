@@ -408,7 +408,7 @@ function startTTW(event, baseUrl, projectId = 1, isTemplatesEnabled = true, apiK
                         textarea.removeEventListener('paste', listenerTextareaPaste, false)
                         textarea.removeEventListener('input',  listenerTextareaInput, false)
                         textarea.removeEventListener('keydown', listenerTextareaKeyDown, false)
-                        btnOk.removeEventListener('click', listenerConfirmButton, false)
+                        //btnOk.removeEventListener('click', listenerConfirmButton, false)
                         isTemplatesEnabled && btnInfo.removeEventListener('click', listenerInfoButton, false)
                         isTemplatesEnabled && selectorTemplateInfo.removeEventListener('click', listenerSelectorTemplateInfoClick, false)
                     }

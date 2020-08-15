@@ -1,3 +1,15 @@
+## 0.1.6 (August 16, 2020)
+
+### Added
+
+- Extend ClipBoard Image Plugin:
+When press Ctrl + V in description isuue the will paste collapse element and make full-size atachment picture.
+
+### Fixed
+
+- fix destroy unexist listeners
+
+
 ## 0.1.5 (August 14, 2020)
 
 ### Added

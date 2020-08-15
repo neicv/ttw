@@ -6,3 +6,7 @@ assets/fonts/robotonew-lightitalic
 /assets/stylesheets/uikit_ttw.min.css
 /db/migrate/old/20140330125030_remove_tracker_str_from_ttw_issue_templates.rb.old
 /db/migrate/old/20140330125334_add_tracker_id_to_ttw_issue_templates.rb.old
+/assets/javascripts/theme_paste_image.min.js
+/assets/javascripts/theme_selector.min.js
+/assets/images/reorder.png
+/assets/images/ttw2.jpg
