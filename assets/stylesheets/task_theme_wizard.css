@@ -113,7 +113,8 @@ td .ttw_table_right {
   width: 16px;
   height: 16px;
   background: url("../images/reorder.png") no-repeat 0 50%;
-  cursor: move;
+  cursor: move !important;
+  border-bottom: none !important;
 }
 
 .sort-handle.ajax-loading {
@@ -122,4 +123,8 @@ td .ttw_table_right {
 
 tr.ui-sortable-helper {
   border: 1px solid #e4e4e4;
+}
+
+span.cbp_attach_thumbnail_box {
+	cursor: pointer !important;
 }

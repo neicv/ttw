@@ -32,9 +32,11 @@
             let options = {}
             options.cbp_txt_too_many_files  = "Не удается добавить файл. Количество одновременно добавляемых файлов ограничено до 10."
             options.cbp_txt_too_big_image   = "Макс объём файла не более 5 мб"
+            options.cbp_txt_copy_link       = "Ссылка на изображение и превью"
             options.cbp_max_attach_size     = 5242880
             options.cbp_max_attachments     = 10
             options.cbp_act_update_id       = "<%= "%03d" % (Time.now.usec / 1000) %>"
+            options.define_link_path        = "" //"/redmine" 
             startTPI(options)
         }
     }
@@ -43,7 +45,8 @@
 
   <%= javascript_include_tag('uikit.min', plugin: 'task_theme_wizard') %>
   <%= javascript_include_tag('uikit-icons.min', plugin: 'task_theme_wizard') %>
-  <%= javascript_include_tag('theme_selector', plugin: 'task_theme_wizard') %>
+  <%#= javascript_include_tag('theme_selector.min', plugin: 'task_theme_wizard') %>
+  <%= javascript_include_tag('theme_paste_image.min', plugin: 'task_theme_wizard') %>
   <%= javascript_include_tag('theme_paste_image', plugin: 'task_theme_wizard') %>
 <% content_for :header_tags do %>
     <%#= stylesheet_link_tag 'uikit.min', :plugin => 'task_theme_wizard' %>

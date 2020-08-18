@@ -3,7 +3,7 @@ Redmine::Plugin.register :task_theme_wizard do
     name 'Task Theme Wizard plugin'
     author 'Friendly-IT'
     description 'This is a plugin for Redmine'
-    version '0.1.6'
+    version '0.1.7'
     url 'http://localhost/redmine/plugin/task_theme_wizard'
     author_url 'https://friendly-it.ru/redmine'
     requires_redmine :version_or_higher => '3.1.0'

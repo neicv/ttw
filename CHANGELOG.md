@@ -1,3 +1,14 @@
+## 0.1.7 (August 18, 2020)
+
+### Added
+
+- Extend ClipBoard Image Plugin:
+thumbnail_box - have preview
+
+### Fixed
+- Extend ClipBoard Image Plugin:
+fix click on link to 'Copy image and thumbnail link'
+
 ## 0.1.6 (August 16, 2020)
 
 ### Added

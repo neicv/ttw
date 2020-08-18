@@ -11,9 +11,9 @@ function startTPI(options = {}){
     issueDescription.addEventListener("paste", pasteHandler, false)
 
     function pasteHandler(e) {
+
         let clipboardData
         //let pastedData
-
         clipboardData = e.clipboardData || window.clipboardData
         let items = clipboardData.items
         if (!items) return
@@ -42,6 +42,7 @@ function startTPI(options = {}){
 
     // Creates a new image from a given source
     function createImage(source) {
+
         pastedImage = new Image()
         pastedImage.onload = function() {
             let dst = document.createElement("canvas")
@@ -82,6 +83,7 @@ function startTPI(options = {}){
     //----------------------------------------------------------------------------
     // Insert attachment input tag into document.
     function insertAttachment(rawImg) {
+
         if (!pastedImage) {
             alert(optionsTPI.cbp_txt_no_image_pst)
         return
@@ -113,11 +115,12 @@ function startTPI(options = {}){
 
         let f = document.createElement('span')
         f.setAttribute('id', 'cbp_attach_thumbnail_box')
+        f.setAttribute('class', 'cbp_attach_thumbnail_box')
         let img = document.createElement('img')
         img.setAttribute('id', 'cbp_attach_thumbnail')
         img.setAttribute('src', dataUrl)
+        img.setAttribute('onclick', "showPreviewImg(\"" + dataUrl + "\");")
         f.appendChild(img)
-
         s.appendChild(f)
 
         dataUrl = dataUrl.substring(dataUrl.indexOf("iVBOR"))
@@ -136,17 +139,18 @@ function startTPI(options = {}){
         elInput.setAttribute('value', pictureName)
         elInput.setAttribute('class', 'name')
         elInput.setAttribute('maxlength', '50')
+        elInput.setAttribute('style','margin: 0px 5px 0px 23px;')
         s.appendChild(elInput)
 
         //<a title="Ссылка на изображение и превью" id="cbp_link_btn" href="#"><img src="/redmine/images/link.png" alt="Link"></a>
         let elA = document.createElement('a')
         elA.setAttribute('id', 'cbp_link_btn')
         elA.setAttribute('href', '#')
-        elA.setAttribute('onclick', "showCopyLink($(this), $(this).prev()); return false;")
-        elA.setAttribute('title', "Ссылка на изображение и превью")
+        elA.setAttribute('onclick', "showCopyLink(this, this.previousElementSibling, \"" + optionsTPI.cbp_txt_copy_link + "\"); return false;")
+        elA.setAttribute('title', optionsTPI.cbp_txt_copy_link)
 
         let elImg = document.createElement('img')
-        elImg.setAttribute('src', '/redmine/images/link.png')
+        elImg.setAttribute('src', optionsTPI.define_link_path + '/images/link.png')
         elImg.setAttribute('alt', "Link")
         elA.appendChild(elImg)
         s.appendChild(elA)
@@ -158,6 +162,7 @@ function startTPI(options = {}){
         elInput.setAttribute('id', 'cbp_picture-description' + attachId)
         elInput.setAttribute('class', 'description')
         elInput.setAttribute('maxlength', "255")
+        elInput.setAttribute('style','margin: 0px 5px 0px 12px;')
         elInput.setAttribute('placeholder', "Описание (необязательно)")
         s.appendChild(elInput)
 
@@ -170,7 +175,7 @@ function startTPI(options = {}){
         elA.setAttribute('title', "Удалить")
 
         elImg = document.createElement('img')
-        elImg.setAttribute('src', '/redmine/images/delete.png')
+        elImg.setAttribute('src', optionsTPI.define_link_path + '/images/delete.png')
         elImg.setAttribute('alt', "Delete")
         elA.appendChild(elImg)
         s.appendChild(elA)
@@ -183,6 +188,7 @@ function startTPI(options = {}){
     //----------------------------------------------------------------------------
     // Check maximum number of attachment fields, return fields element.
     function checkAttachFields() {
+
         let fileFields  = document.querySelector('#attachments_fields')
         let imageFields = document.querySelector('#cbp_image_fields')
         if (!fileFields || !imageFields ||
@@ -204,4 +210,70 @@ function insertText( txtarea, text ) {
 
 function generateID(){
     return '-' + Math.random().toString(36).substr(2, 9)
+}
+
+//----------------------------------------------------------------------------
+// Show copy wiki link dialog.
+function showCopyLink(btn, name, cbp_txt_copy_link) {
+
+    //options.cbp_txt_copy_link       = 'Ссылка на изображение и превью'
+    let tmplDialog = `
+    <div class="ttw-text uk-card-default">
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+        <div class="ttw-text uk-modal-header">
+            <h3 class="uk-h4 uk-text-primary">${cbp_txt_copy_link}:<br></h3>
+        </div>
+
+        <div class="uk-modal-body uk-form-stacked">
+            <div class="uk-margin">
+                <div class="uk-form-controls">
+                    <input class="uk-input" type="text" value="!${name.value}!">
+                </div>
+            </div>
+
+            <div class="uk-margin">
+                <div class="uk-form-controls">
+                    <input class="uk-input" type="text" value="{{thumbnail(${name.value})}}">
+                </div>
+            </div>
+        </div>
+    </div>
+    `
+
+    dialog(document.querySelector('#cbp_link_dlg'), {
+    content: tmplDialog,
+    closeOnEscape: true,
+    modal: true,
+    resizable: false,
+    dialogClass: "cbp_drop_shadow cbp_dlg_small",
+    position: { my: "left top", at: "left bottom", of: btn },
+    minHeight: 0,
+    width: "auto"
+    })
+}
+
+function showPreviewImg(img) {
+
+    let tmplDialog = `
+    <div id="modal-media-image" class="uk-flex-top">
+        <div class="uk-width-auto uk-margin-auto-vertical">
+            <button class="uk-modal-close-outside" type="button" uk-close></button>
+                <img src=${img} alt="" width="400" height="300">
+        </div>
+    </div>
+    `
+    dialog(document.querySelector('#cbp_link_dlg'), {
+        content: tmplDialog,
+        closeOnEscape: true,
+        modal: true,
+        resizable: false,
+        dialogClass: "cbp_drop_shadow cbp_dlg_small",
+        //position: { my: "left top", at: "left bottom", of: btn },
+        minHeight: 0,
+        width: "auto"
+    })
+}
+
+function dialog(element, options = {}){
+    const modalConfirm = UIkit.modal.dialog(options.content, { stack: true, 'bgClose': true })
 }
