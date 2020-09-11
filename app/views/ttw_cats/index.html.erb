@@ -17,6 +17,7 @@
   <ul>
     <li><%= link_to l(:label_ttw_category_maker), ttw_cats_path(), :class => 'selected' %></li>
     <li><%= link_to l(:label_ttw_templates_maker), ttw_issue_templates_path() %></li>
+    <li><%= link_to l(:label_ttw_top_lvl_maker), ttw_top_lvls_path() %></li>
   </ul>
 </div>
 
@@ -31,48 +32,44 @@
       <thead><tr>
       <th><%=l(:field_name)%></th>
       <th><%=l(:field_sub_category)%></th>
+      <th><%=l(:field_toplvl)%></th>
       <th><%=l(:label_ttw_this_category)%></th>
       <th><%=l(:button_sort)%></th>
-      <th></th>
+      <th><%=l(:button_delete)%></th>
       <th></th>
       </tr></thead>
       <tbody class="ui-sortable">
-    <% for cat in @ttw_cats %>
-      <tr class="<%= cycle('odd', 'even') %> ttw_cat">
-      <td class="category"><%= link_to cat.category, edit_ttw_cat_path(cat) %></td>
-      <td class="tag">
-        <%= cat.sub_category.join(", ")[0, 64] << " ..." %>
-        <!-- <table class="list ttw_categories">
-          <tbody>
-          <%# cat.sub_category.each do |scat| %>
-            <tr class="<%#= cycle("odd", "even") %>">
-            <td class="tag"><%#= scat %></td>
-            </tr>
-          <%# end %>
-          </tbody>
-        </table> -->
-      </td>
+      <% for cat in @ttw_cats %>
+        <tr class="<%= cycle('odd', 'even') %> ttw_cat">
+        <td class="category"><%= link_to cat.category, edit_ttw_cat_path(cat) %></td>
+        <td class="tag">
+          <%= cat.sub_category.join(", ")[0, 64] << " ..." %>
+          <!-- <table class="list ttw_categories">
+            <tbody>
+            <%# cat.sub_category.each do |scat| %>
+              <tr class="<%#= cycle("odd", "even") %>">
+              <td class="tag"><%#= scat %></td>
+              </tr>
+            <%# end %>
+            </tbody>
+          </table> -->
+        </td>
+        <td class="tag"><%= cat.toplvl? ? @ttw_top_lvls.find(cat.toplvl) : ' - '  %></td>
+        <td class="tag"><%= check_box_tag 'cat[enabled]', 1, cat.enabled?, :disabled => true, :readonly => true %></td> 
 
-      <td class="tag"> <%= check_box_tag 'cat[enabled]', 1, cat.enabled?, :disabled => true, :readonly => true %></td> 
+        <!-- <td class="reorder"> -->
+          <!-- <%#= reorder_links('ttw_cat', {:action => 'update', :id => cat.id, :page => params[:page]}, :put) %> -->
+        <!-- </td> -->
 
-      <!-- <td class="reorder"> -->
-        <%#= reorder_links('ttw_cat', {:action => 'update', :id => cat.id, :page => params[:page]}, :put) %>
-      <!-- </td> -->
+        <td class="tag">
+          <%= reorder_handle(cat, :url => url_for({ controller: 'ttw_cats', :id => cat, :action =>'update' })) %>
+        </td>
+        <td class="buttons">
+          <%= delete_link ttw_cat_path(cat) %>
+        </td>
+        </tr>
+      <% end %>
 
-      <td class="buttons">
-        <%= reorder_handle(cat, :url => url_for({ controller: 'ttw_cats', :id => cat, :action =>'update' })) %>
-      </td>
-      <td class="buttons">
-        <%= delete_link ttw_cat_path(cat) %>
-      </td>
-      </tr>
-    <% end %>
-      <!-- <tr class="<%#= cycle("odd", "even") %>">
-      <td class="category"><%#=l(:label_ttw_total)%></td>
-      <td class="tag"><div>&nbsp;</div></td>
-      <td class="tag"><div>&nbsp;</div></td>
-      <td class="tag"><%#= ttw_count %></td>
-      </tr> -->
       </tbody>
     </table>
     </div>

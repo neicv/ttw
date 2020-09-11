@@ -17,6 +17,7 @@ class TtwCatsController < ApplicationController
 
   def index
     @ttw_cats = TtwCat.sorted
+    @ttw_top_lvls = TtwTopLvl.all
     respond_to do |format|
       format.html { render :layout => false if request.xhr? }
       format.api
@@ -42,6 +43,7 @@ class TtwCatsController < ApplicationController
 
   def edit
     @ttw_cat = TtwCat.find(params[:id])
+    @ttw_top_lvls = TtwTopLvl.all
   end
 
   def update
@@ -72,7 +74,8 @@ class TtwCatsController < ApplicationController
                layout: false,
                locals: { ttw_cats: @ttw_cats,
                         ttw_issue_templates: @ttw_issue_templates,
-                        ttw_trackers: @ttw_trackers
+                        ttw_trackers: @ttw_trackers,
+                        ttw_top_lvls: @ttw_top_lvls
                         }
       end
       format.api do
@@ -80,7 +83,8 @@ class TtwCatsController < ApplicationController
                layout: false,
                locals: { ttw_cats: @ttw_cats,
                         ttw_issue_templates: @ttw_issue_templates,
-                        ttw_trackers: @ttw_trackers
+                        ttw_trackers: @ttw_trackers,
+                        ttw_top_lvls: @ttw_top_lvls
                         }
       end
 
@@ -90,7 +94,8 @@ class TtwCatsController < ApplicationController
                layout: false,
                locals: { ttw_cats: @ttw_cats,
                         ttw_issue_templates: @ttw_issue_templates,
-                        ttw_trackers: @ttw_trackers
+                        ttw_trackers: @ttw_trackers,
+                        ttw_top_lvls: @ttw_top_lvls
                         }
       end
     end
@@ -107,7 +112,7 @@ class TtwCatsController < ApplicationController
   private
 
   def ttw_params
-    params.require(:ttw_cat).permit(:category, :sub_category, :enabled, :position)
+    params.require(:ttw_cat).permit(:toplvl, :category, :sub_category, :enabled, :position)
   end
 
   def move

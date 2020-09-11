@@ -1,0 +1,64 @@
+<div class="contextual">
+    <%= link_to l(:label_settings),
+                  { controller: 'settings', action: 'plugin', id: 'task_theme_wizard' },
+                  :class => 'icon icon-projects' %> 
+                  <!--settings-->
+</div>
+
+<div class="contextual">
+    <%= link_to l(:label_ttw_category_new),
+                    { controller: 'ttw_top_lvls', action: 'new', project_id: @project },
+                    :class => 'icon icon-add' %>
+</div>
+
+<h2><%=l(:label_ttw_category_plural)%></h2>  
+
+<div class="tabs">
+  <ul>
+    <li><%= link_to l(:label_ttw_category_maker), ttw_cats_path()%></li>
+    <li><%= link_to l(:label_ttw_templates_maker), ttw_issue_templates_path() %></li>
+    <li><%= link_to l(:label_ttw_top_lvl_maker), ttw_top_lvls_path(), :class => 'selected'  %></li>
+  </ul>
+</div>
+
+<% if @ttw_top_lvls.blank? %>
+    <div class='template_box'>
+      <%= l(:label_ttw_no_toplvl_for_this_project) %>
+    </div>
+<% else %>
+
+<div class="ttw_category_box">
+  <table class="list ttw_categories ui-sortable table-sortable">
+    <thead><tr>
+    <th><%=l(:field_toplvl)%></th>
+    <th><%=l(:label_enabled)%></th>
+    <th><%=l(:button_sort)%></th>
+    <th><%=l(:button_delete)%></th>
+    </tr></thead>
+    <tbody class="ui-sortable">
+      <% for lvl in @ttw_top_lvls %>
+        <tr class="<%= cycle('odd', 'even') %> ttw_cat">
+        <td class="category"><%= link_to lvl.name, edit_ttw_top_lvl_path(lvl) %></td>
+        <td class="tag"> <%= check_box_tag 'lvl[enabled]', 1, lvl.enabled?, :disabled => true, :readonly => true %></td> 
+        <td class="tag">
+          <%= reorder_handle(lvl, :url => url_for({ controller: 'ttw_top_lvls', :id => lvl, :action =>'update' })) %>
+        </td>
+        <td class="buttons">
+          <%= delete_link ttw_top_lvl_path(lvl) %>
+        </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<% end %>
+
+<%= javascript_tag do %>
+  $(function() { $("table.table-sortable tbody").positionedItems(); })
+<% end %>
+
+<%= javascript_include_tag('theme_sortable', plugin: 'task_theme_wizard') %>
+<% content_for :header_tags do %>
+    <%= stylesheet_link_tag 'task_theme_wizard', :plugin => 'task_theme_wizard' %>
+<% end %>

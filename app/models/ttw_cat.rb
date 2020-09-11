@@ -6,6 +6,8 @@ class TtwCat < ActiveRecord::Base
   validates_uniqueness_of :category
   validates_length_of :category, :maximum => 64
 
+  validates_presence_of :toplvl
+
   validates_presence_of :sub_category
   serialize :sub_category
   acts_as_list

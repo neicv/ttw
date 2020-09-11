@@ -5,6 +5,7 @@ api.array :ttw_cats do
       api.category cat.category
       api.sub_category cat.sub_category
       api.enabled cat.enabled
+      api.top_lvl cat.top_lvl
     end
   end
 end
@@ -24,6 +25,14 @@ api.array :ttw_trackers do
     api.tracker do
       api.id tracker.id
       api.name tracker.name
+    end
+  end
+end
+api.array :ttw_top_lvls do
+  @ttw_top_lvls.each do |lvl|
+    api.lvl do
+      api.id lvl.id
+      api.name lvl.name
     end
   end
 end

@@ -5,6 +5,7 @@ api.array :ttw_cats do
       api.category cat.category
       api.sub_category cat.sub_category
       api.enabled cat.enabled
+      api.toplvl cat.toplvl
     end
   end
 end

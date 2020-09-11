@@ -16,6 +16,10 @@ td .ttw_table_right {
     margin-bottom: 10px;
 }
 
+table.list td.category {
+    text-align: left;
+    padding-left: 20px;
+}
 .ttw-btn {
     margin: 0;
     border: none;

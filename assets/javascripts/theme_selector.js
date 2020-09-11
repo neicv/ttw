@@ -1,16 +1,17 @@
 /* global CKEDITOR, Element, Event */
 'use strict'
 
-const TMPL_OVERWRITE = 1
-const TMPL_PUTBEGIN  = 2
-const TMPL_PUTEND    = 3
-
 function startTTW(event, baseUrl, projectId = 1, isTemplatesEnabled = true, apiKey = '', base_builtin_fields) {
 
     event.preventDefault()
     let ns = this
     // redmine description field limitation
-    const maxlength = 255
+    const TMPL_OVERWRITE        = 1
+    const TMPL_PUTBEGIN         = 2
+    const TMPL_PUTEND           = 3
+    const SUBJECT_MIN_LENGTH    = 10
+    const SUBJECT_MAX_LENGTH    = 255
+    
 
     /*
     //Если нужен REST API:
@@ -66,6 +67,9 @@ function startTTW(event, baseUrl, projectId = 1, isTemplatesEnabled = true, apiK
         templateKey = Object.keys(parsedData)[2]
         let loadedTrackers = parsedData[templateKey]
 
+        templateKey = Object.keys(parsedData)[3]
+        let loadedTopLevels = parsedData[templateKey]
+
 
         let issueSubject = document.getElementById('issue_subject')
         let issueDescription = document.getElementById('issue_description')
@@ -79,25 +83,25 @@ function startTTW(event, baseUrl, projectId = 1, isTemplatesEnabled = true, apiK
         let strClearTheme = ''
 
         if (string2.length !=0) {
-          let matches = string2.split('[')
-            .filter(function(v){ return v.indexOf(']') > -1})
-            .map( function(value) { 
-              return value.split(']')[0]
-            })
+            let matches = string2.split('[')
+                .filter(function(v){ return v.indexOf(']') > -1})
+                .map( function(value) { 
+                return value.split(']')[0]
+                })
 
-          tempCategory = matches[0] !== undefined ? matches[0] : ''
-          tempSubCategory = matches[1] !== undefined ? matches[1] : ''
+            tempCategory = matches[0] !== undefined ? matches[0] : ''
+            tempSubCategory = matches[1] !== undefined ? matches[1] : ''
 
-          tempCategory = tempCategory.trim()
-          tempSubCategory = tempSubCategory.trim()
+            tempCategory = tempCategory.trim()
+            tempSubCategory = tempSubCategory.trim()
 
-          if (string2.indexOf('[') != -1){
-            strClearTheme = string2.slice(0, string2.indexOf('[')) 
-            string2 = string2.lastIndexOf(']') != -1 ? string2.slice(string2.lastIndexOf(']') + 1 , string2.length) : ''
-            strClearTheme = strClearTheme + string2
-          }
-          else strClearTheme = string2
-          if (strClearTheme != undefined || strClearTheme != '') strClearTheme = strClearTheme.trim()
+            if (string2.indexOf('[') != -1){
+                strClearTheme = string2.slice(0, string2.indexOf('[')) 
+                string2 = string2.lastIndexOf(']') != -1 ? string2.slice(string2.lastIndexOf(']') + 1 , string2.length) : ''
+                strClearTheme = strClearTheme + string2
+            }
+            else strClearTheme = string2
+            if (strClearTheme != undefined || strClearTheme != '') strClearTheme = strClearTheme.trim()
         }
         console.log(tempCategory, tempSubCategory, strClearTheme)
 
@@ -106,44 +110,34 @@ function startTTW(event, baseUrl, projectId = 1, isTemplatesEnabled = true, apiK
 
         let tmplm = ''
         let isLoadedSelector = false
+        let elSelectCategory = ''
+        let elSelectSubCategory = ''
         let subSelect = []
+        
+        let topLevel = 1
+        if (tempCategory) {
+            topLevel = loadedSelector.find(val => val.category.toLowerCase().trim()  === tempCategory.toLowerCase()).toplvl || 1
+        }
 
-        if (Array.isArray(loadedSelector) && loadedSelector.length !=0){
+        if (Array.isArray(loadedSelector) && loadedSelector.length && Array.isArray(loadedTopLevels) && loadedTopLevels.length){
 
             // Prepare view subject selectors
-
-            let elSelect = '<select class="uk-select" id="ttw-selector-category">'
-            let elSelected = ''
             let elSubSelected = ''
-            let elSelectedId = -1
-            loadedSelector.forEach(function (selCategory, i) {
-            if (selCategory.enabled === true) {
-                //elSelected =  selCategory.category === tempCategory ? 'selected' : ''
-                if (selCategory.category === tempCategory){
-                    elSelected = 'selected'
-                    elSelectedId = selCategory.id
-                }
-                else {
-                    elSelected = ''
-                }
-                elSelect += '<option ' + elSelected + ' value="' + selCategory.id + '">' + selCategory.category + '</option>'
-                let elSubSelect = '<select class="uk-select" id="ttw-subcategory">'
-                if (selCategory.sub_category.length !=0 && selCategory.sub_category !== undefined) {
-                    selCategory.sub_category.forEach(function (selSubCategory, i) {
-                    elSubSelected =  selSubCategory === tempSubCategory && elSelectedId != -1 ? 'selected' : ''
-                    elSubSelect += '<option '+ elSubSelected + ' value="' + selSubCategory + '">' + selSubCategory + '</option>'
-                    })
-                }
-                else {
-                    elSubSelect += '<option value="none">Подкатегория отсутствует</option>'
-                }
-                elSubSelect += '</select>'
-                subSelect.push([selCategory.id, elSubSelect])
+           
+            let elSelectTopLevel = '<select class="uk-select" id="ttw-selector-toplevels">'
+            loadedTopLevels.forEach(function (selTopLevel, i) {
+            if (selTopLevel.enabled === true) {
+                elSubSelected =  selTopLevel.position == topLevel ? 'selected' : ''
+                elSelectTopLevel += '<option '+ elSubSelected + ' value="' + selTopLevel.id + '">' + selTopLevel.name + '</option>'
                 }
             })
-            elSelect += '</select>'
+            elSelectTopLevel += '</select>'
 
-            let subCategory = elSelectedId != -1 ? subSelect.find(suber => suber[0] == elSelectedId ) : subSelect[0]
+            // Get selectors
+            let elements = makeElementsSelectors(loadedSelector, topLevel, tempCategory, tempSubCategory)
+            elSelectCategory    = elements.elCategory
+            elSelectSubCategory = elements.elSubCategory
+            subSelect           = elements.tempSubSelect
 
             // prepare templates view
 
@@ -169,7 +163,7 @@ function startTTW(event, baseUrl, projectId = 1, isTemplatesEnabled = true, apiK
             <div class="ttw-text">
                 <div class="uk-modal-body">
                     <button class="uk-modal-close-default" type="button" uk-close></button>
-                    <h3 class="uk-h4">Темайзор</h3>
+                    <h3 class="uk-h4">Темайзер</h3>
                     <div class="uk-form-stacked">
                         <ul uk-tab>
                             <li><a href="#">Тема</a></li>
@@ -190,12 +184,19 @@ function startTTW(event, baseUrl, projectId = 1, isTemplatesEnabled = true, apiK
                                         </div>
                                         </div>
                                     </div>` : ''}
-                                    <!--<legend class="uk-legend" style="font-size: 1.2rem;">Выберете категорию:</legend>-->
+                                    <!--<legend class="uk-legend" style="font-size: 1.2rem;">Выберете категорию [первые скобки]:</legend>-->
                                     <div class="uk-margin">
-                                    <label class="uk-form-label" for="form-stacked-text">Выберете категорию:</label>
-                                        ${elSelect}
+                                        <label class="uk-form-label" for="form-stacked-text">Выберете Раздел:</label>
+                                        ${elSelectTopLevel}
                                     </div>
-                                        <div class="uk-margin" id="ttw-selector-subcategory">${subCategory[1]}</div>
+                                    <div class="uk-margin" id="ttw-element-selector-category">
+                                        <label class="uk-form-label" for="form-stacked-text">Выберете категорию [первые скобки]:</label>
+                                        ${elSelectCategory}
+                                    </div>
+                                    <div class="uk-margin" id="ttw-selector-subcategory">
+                                        <label class="uk-form-label" for="form-stacked-text">Выберете подкатегорию [вторые скобки]:</label>
+                                        ${elSelectSubCategory[1]}
+                                    </div>
                                     <div class="uk-margin">
                                         <label class="uk-form-label" for="form-stacked-text">Текст темы:</label>
                                         <div class="uk-form-controls">
@@ -249,10 +250,14 @@ function startTTW(event, baseUrl, projectId = 1, isTemplatesEnabled = true, apiK
         //let tooltip
         let selectorTemplate
         let selectorTemplateInfo
+        let selToplevel
+        let subcategory
         let templateInfoContent
         let listenerTextareaPaste
         let listenerTextareaInput
         let listenerSelectorCategory
+        let listenerSelectorSubcategory
+        let listenerSelectorTopLevel
         let listenerTextareaKeyDown
         let listenerInfoButton
         let listenerSelectorTemplateInfoClick
@@ -273,22 +278,10 @@ function startTTW(event, baseUrl, projectId = 1, isTemplatesEnabled = true, apiK
             let btnOk = el.querySelector('#modal-confirm-btn')
             btnOk.disabled = !isValidSummaryString(strClearTheme)
 
-
-
             if (isLoadedSelector){
-
-                textarea = el.querySelector('#ttw-textarea-theme')
-                selector = el.querySelector('#ttw-selector-category')
-                fieldset = el.querySelector('#ttw-modal-fieldset-theme')
-                btnInfo  = el.querySelector('#ttw-template-info-btn')
-                templateInfoContent = el.querySelector('#ttw-template-info-tmpl')
-                selectorTemplateInfo = el.querySelector('#ttw-selector-templates-info')
-                selectorTemplate = el.querySelector('#ttw-selector-templates')
-                templateApplyChkBox = el.querySelector('#ttw-template-apply')
 
                 // тултип
                 //tooltip = UIkit.tooltip(templateApplyChkBox, { title: 'Применить шаблон к описанию задачи', container: '.checkbox-apply', pos: 'top-right' })//.show() //, container: '.checkbox-apply'
-
                 listenerTextareaPaste = function(event) {
                     let clipboardData
                     let pastedData
@@ -297,7 +290,7 @@ function startTTW(event, baseUrl, projectId = 1, isTemplatesEnabled = true, apiK
                     clipboardData = e.clipboardData || window.clipboardData
                     pastedData = avoidHTML(clipboardData.getData('Text'))
                     pastedData = pastedData.replace( /[\t\r\n]/g, " " )
-                    pastedData = pastedData.slice(0, maxlength - getFieldString(fieldset, loadedSelector).length)
+                    pastedData = pastedData.slice(0, SUBJECT_MAX_LENGTH - getFieldString(fieldset, loadedSelector).length)
                     if (pastedData.length !=0) textarea.value = pastedData
                 }
                 
@@ -310,18 +303,45 @@ function startTTW(event, baseUrl, projectId = 1, isTemplatesEnabled = true, apiK
                     let key = event.key
                     if (key == 'Home' || key == 'Delete' || key == 'Backspace' || key == 'ArrowLeft' || key == 'ArrowRight'  || key == 'End' || key == 'ArrowUp' || key == 'ArrowDown') return
                     
-                    if (textarea.value.length > maxlength - getFieldString(fieldset, loadedSelector).length - 1) {
+                    if (textarea.value.length > SUBJECT_MAX_LENGTH - getFieldString(fieldset, loadedSelector).length - 1) {
                     //textarea.value = textarea.value.slice(0, -1)
                     event.preventDefault()
                     event.stopPropagation()
                     }
                 }
                 
-                listenerSelectorCategory = function(event){
+                listenerSelectorCategory = function(event) {
                     for (let opt of event.target.children) {
                         if (opt.selected) {
                             let subSelector = subSelect.find(suber => suber[0] == opt.value )
-                            document.querySelector('#ttw-selector-subcategory').innerHTML = subSelector[1]
+                            document.querySelector('#ttw-selector-subcategory').children[1].innerHTML = subSelector[1]
+                            document.querySelector('#ttw-subcategory').focus()
+                            break
+                        }
+                    }
+                }
+
+                listenerSelectorSubcategory = function(event) {
+                    for (let opt of event.target.children) {
+                        if (opt.selected) {
+                            document.querySelector('#ttw-textarea-theme').focus()
+                        }
+                    }
+                }
+
+                listenerSelectorTopLevel = function(event) {
+                    for (let opt of event.target.children) {
+                        if (opt.selected) {
+                            //let subSelector = subSelect.find(suber => suber[0] == opt.value )
+                            //document.querySelector('#ttw-selector-toplevels').children[1].innerHTML = 
+                            let elements = makeElementsSelectors(loadedSelector, opt.value, tempCategory, tempSubCategory)
+                            elSelectCategory = elements.elCategory
+                            elSelectSubCategory = elements.elSubCategory
+                            subSelect = elements.tempSubSelect
+
+                            document.querySelector('#ttw-element-selector-category').children[1].innerHTML = elSelectCategory
+                            document.querySelector('#ttw-selector-subcategory').children[1].innerHTML = subSelect[0]
+                            document.querySelector('#ttw-selector-category').focus()
                             break
                         }
                     }
@@ -340,43 +360,56 @@ function startTTW(event, baseUrl, projectId = 1, isTemplatesEnabled = true, apiK
                 listenerInfoButton = function(event){
                     event.preventDefault()
                     event.stopPropagation()
+
                     if (isLoadedSelector){
-        
-                    
-                    let selectedTemplate_id = selectorTemplateInfo.value
-                    let tmpl_template = loadedTemplates.find(tmpl => tmpl.id == selectedTemplate_id )
-                    let tmpl_tracker = loadedTrackers.find(tmpl => tmpl.id == tmpl_template.tracker_id)
-                    tmpl_tracker = tmpl_tracker.name
+                        let selectedTemplate_id = selectorTemplateInfo.value
+                        let tmpl_template = loadedTemplates.find(tmpl => tmpl.id == selectedTemplate_id )
+                        let tmpl_tracker = loadedTrackers.find(tmpl => tmpl.id == tmpl_template.tracker_id)
+                        tmpl_tracker = tmpl_tracker.name
 
-                    let view_tmpl = `
-                    <div class="uk-card uk-card-body uk-card-default" id="ttw-view-tmpl">
-                        <div class="uk-margin">
-                            <!-- <label class="uk-form-label" for="form-stacked-text">Имя шаблона:</label>-->
-                            <h3 class="uk-card-title">${tmpl_template.name}</h3>
-                        </div>
-                        <div class="uk-margin">
-                            <label class="uk-form-label" for="form-stacked-text ">Трекер:</label>
-                            <div class="uk-form-control uk-text-primary">
-                                ${tmpl_tracker}
+                        let view_tmpl = `
+                        <div class="uk-card uk-card-body uk-card-default" id="ttw-view-tmpl">
+                            <div class="uk-margin">
+                                <!-- <label class="uk-form-label" for="form-stacked-text">Имя шаблона:</label>-->
+                                <h3 class="uk-card-title">${tmpl_template.name}</h3>
                             </div>
-                        </div>
-                        <div class="uk-margin">
-                            <label class="uk-form-label" for="form-stacked-text">Описание:</label>
-                            <div class="uk-form-controls">
-                                ${tmpl_template.description}
+                            <div class="uk-margin">
+                                <label class="uk-form-label" for="form-stacked-text ">Трекер:</label>
+                                <div class="uk-form-control uk-text-primary">
+                                    ${tmpl_tracker}
+                                </div>
                             </div>
-                        </div>
-                    </div>`
+                            <div class="uk-margin">
+                                <label class="uk-form-label" for="form-stacked-text">Описание:</label>
+                                <div class="uk-form-controls">
+                                    ${tmpl_template.description}
+                                </div>
+                            </div>
+                        </div>`
 
-                    templateInfoContent.innerHTML = view_tmpl
-                    UIkit.drop('#ttw-template-info-tmpl', {mode: 'click', animation: 'uk-animation-slide-top-small', duration: 500}).show()
+                        templateInfoContent.innerHTML = view_tmpl
+                        UIkit.drop('#ttw-template-info-tmpl', {mode: 'click', animation: 'uk-animation-slide-top-small', duration: 500}).show()
                     }
                 }
 
+                textarea = el.querySelector('#ttw-textarea-theme')
+                selector = el.querySelector('#ttw-selector-category')
+                selToplevel = el.querySelector('#ttw-selector-toplevels')
+                subcategory = el.querySelector('#ttw-subcategory')
+                fieldset = el.querySelector('#ttw-modal-fieldset-theme')
+                btnInfo  = el.querySelector('#ttw-template-info-btn')
+                templateInfoContent = el.querySelector('#ttw-template-info-tmpl')
+                selectorTemplateInfo = el.querySelector('#ttw-selector-templates-info')
+                selectorTemplate = el.querySelector('#ttw-selector-templates')
+                templateApplyChkBox = el.querySelector('#ttw-template-apply')
+
                 selector.addEventListener('change', listenerSelectorCategory, false)
+                selToplevel.addEventListener('change', listenerSelectorTopLevel, false)
+                subcategory.addEventListener('change', listenerSelectorSubcategory, false)
                 textarea.addEventListener('paste',  listenerTextareaPaste, false)
                 textarea.addEventListener('input',  listenerTextareaInput, false)
                 textarea.addEventListener('keydown', listenerTextareaKeyDown, false)
+                //btnOk.addEventListener('click', listenerConfirmButton, false)
                 isTemplatesEnabled && btnInfo.addEventListener('click', listenerInfoButton, false)
                 isTemplatesEnabled && selectorTemplateInfo.addEventListener('click', listenerSelectorTemplateInfoClick, false)
             }
@@ -390,9 +423,9 @@ function startTTW(event, baseUrl, projectId = 1, isTemplatesEnabled = true, apiK
             function isValidSummaryStringMaxLength(val){
                 if(isLoadedSelector && fieldset !== undefined){
                     let hLen = getFieldString(fieldset, loadedSelector).length  + val.length - 1
-                    return hLen <= maxlength
+                    return hLen <= SUBJECT_MAX_LENGTH
                 }
-                else return val.length >= 10
+                else return val.length >= SUBJECT_MIN_LENGTH
             }
 
             function isValidSummaryString(val){
@@ -405,6 +438,8 @@ function startTTW(event, baseUrl, projectId = 1, isTemplatesEnabled = true, apiK
                 //component.$destroy(true)
                     try {
                         selector.removeEventListener('change', listenerSelectorCategory, false)
+                        selToplevel.removeEventListener('change', listenerSelectorTopLevel, false)
+                        subcategory.removeEventListener('change', listenerSelectorSubcategory, false)
                         textarea.removeEventListener('paste', listenerTextareaPaste, false)
                         textarea.removeEventListener('input',  listenerTextareaInput, false)
                         textarea.removeEventListener('keydown', listenerTextareaKeyDown, false)
@@ -428,7 +463,7 @@ function startTTW(event, baseUrl, projectId = 1, isTemplatesEnabled = true, apiK
                 }
             })
 
-             // Confirm button press (apply changes to redmine)
+            // Confirm button press (apply changes to redmine)
             UIkit.util.on(btnOk, 'click', function (e) {
                 e.preventDefault()
                 e.stopPropagation()
@@ -440,10 +475,9 @@ function startTTW(event, baseUrl, projectId = 1, isTemplatesEnabled = true, apiK
                 
                 // Apply templates to issue description and tracker
                 if (isTemplatesEnabled && templateApplyChkBox.checked){
-                    
                     if (issueDescription.value !=''){
                         let tmplConfirm = `
-                        <div class="ttw-text">
+                        <div class="ttw-text uk-card-default">
                             <button class="uk-modal-close-default" type="button" uk-close></button>
                             <div class="ttw-text uk-modal-header">
                                 <h3 class="uk-h4 uk-text-danger">Предупреждение:<br></h3>
@@ -491,10 +525,8 @@ function startTTW(event, baseUrl, projectId = 1, isTemplatesEnabled = true, apiK
                                             }
                                         }
                                     }
-                                    applyDescription(typeC)
-                                    UIkit.notification("Темазатор применён", {status: 'primary', timeout: 750})
                                 }
-                                
+                                applyDescription(typeC)
                                 //destroy modals
                                 modalConfirm.hide()
                                 modal.hide()
@@ -506,7 +538,7 @@ function startTTW(event, baseUrl, projectId = 1, isTemplatesEnabled = true, apiK
                         modal.hide()
                     }
                 }
-                UIkit.notification("Темазатор применён", {status: 'primary', timeout: 750})
+                UIkit.notification("Темазайзер применён", {status: 'primary', timeout: 750})
             })
 
             function applyDescription(type = TMPL_OVERWRITE){
@@ -521,13 +553,13 @@ function startTTW(event, baseUrl, projectId = 1, isTemplatesEnabled = true, apiK
                         break
 
                         case TMPL_PUTBEGIN:
-                            issueDescription.value = issue.description + issueDescription.value
-                            setCkeContent(issue.description + issueDescription.value)
+                            issueDescription.value = issue.description + '\n' + issueDescription.value
+                            setCkeContent(issue.description + '\n' + issueDescription.value)
                         break
 
                         case TMPL_PUTEND:
-                            issueDescription.value = issueDescription.value + issue.description
-                            setCkeContent(issueDescription.value + issue.description)
+                            issueDescription.value = issueDescription.value + '\n' + issue.description
+                            setCkeContent(issueDescription.value + '\n' + issue.description)
                         break
 
                         default:
@@ -602,11 +634,13 @@ function escapeHTML(val) {
     div.textContent = val
     return div.textContent
 }
+
 function unescapeHTML(val) {
     const div = document.createElement('div')
     div.innerHTML = val
     return div.innerHTML
 }
+
 function setCkeContent(val){
     try {
         if (CKEDITOR.instances.issue_description) {
@@ -614,5 +648,53 @@ function setCkeContent(val){
         }
     } catch (e) {
         // do nothing.
+    }
+}
+
+function changeSubCategory(){
+    document.querySelector('#ttw-textarea-theme').focus()
+}
+
+function makeElementsSelectors(loadedSelector, topLevel, tempCategory, tempSubCategory) {
+
+    let elSelectCategory = '<select class="uk-select" id="ttw-selector-category">'
+    let elSelected = ''
+    let elSubSelected = ''
+    let subSelect = []
+    let elSelectedId = -1
+
+    loadedSelector.filter(element => element.toplvl === parseInt(topLevel))
+    .forEach(function (selCategory, i) {
+    if (selCategory.enabled === true) {
+        //elSelected =  selCategory.category === tempCategory ? 'selected' : ''
+        if (selCategory.category === tempCategory){
+            elSelected = 'selected'
+            elSelectedId = selCategory.id
+        }
+        else {
+            elSelected = ''
+        }
+        elSelectCategory += '<option ' + elSelected + ' value="' + selCategory.id + '">' + selCategory.category + '</option>'
+        let elSubSelect = '<select class="uk-select" id="ttw-subcategory">'
+        if (selCategory.sub_category.length !=0 && selCategory.sub_category !== undefined) {
+            selCategory.sub_category.forEach(function (selSubCategory, i) {
+            elSubSelected =  selSubCategory === tempSubCategory && elSelectedId != -1 ? 'selected' : ''
+            elSubSelect += '<option '+ elSubSelected + ' value="' + selSubCategory + '">' + selSubCategory + '</option>'
+            })
+        }
+        else {
+            elSubSelect += '<option value="none">Подкатегория отсутствует</option>'
+        }
+        elSubSelect += '</select>'
+        subSelect.push([selCategory.id, elSubSelect])
+        }
+    })
+    elSelectCategory += '</select>'
+
+    let elSelectSubCategory = elSelectedId != -1 ? subSelect.find(suber => suber[0] == elSelectedId ) : subSelect[0]
+    return {
+        'elCategory': elSelectCategory,
+        'elSubCategory': elSelectSubCategory,
+        'tempSubSelect': subSelect 
     }
 }

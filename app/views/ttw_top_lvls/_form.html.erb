@@ -1,0 +1,12 @@
+<%= error_messages_for 'ttw_top_lvl' %>
+
+<div class="splitcontentleft">
+<div class="box tabular">
+
+<p><%= f.text_field :name, :required => true %></p>
+
+<p><%= f.check_box :enabled %></p>
+
+</div>
+<p><%= submit_tag l(:button_save) %></p>
+</div>

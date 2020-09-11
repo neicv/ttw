@@ -1,3 +1,9 @@
+## 0.2.0 (September 11, 2020)
+
+### Added
+
+- Top Level Category
+
 ## 0.1.7 (August 18, 2020)
 
 ### Added

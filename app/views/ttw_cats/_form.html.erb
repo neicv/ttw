@@ -10,6 +10,11 @@
     <em class="info"><%= l(:text_ttw_sub_categoies_info) %></em>
 </p>
 
+<p>
+    <%= f.select :toplvl, @ttw_top_lvls.collect { |t| [t.name, t.id] }, { required: true }, 
+    required: true, label: l(:label_ttw_toplvl), selected: @ttw_cat.toplvl %>
+</p>
+
 <p><%= f.check_box :enabled %></p>
 
 </div>

@@ -1,0 +1,9 @@
+api.array :ttw_top_lvl do
+  @ttw_top_lvl.each do |lvl|
+    api.lvl do
+      api.id lvl.id
+      api.name lvl.name
+      api.enabled lvl.enabled
+    end
+  end
+end

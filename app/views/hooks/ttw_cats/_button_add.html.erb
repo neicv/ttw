@@ -13,21 +13,19 @@
     </tbody>
 </table>
 
-
 <script>
     const baseUrl = "<%= url_for(controller: 'ttw_cats', action: 'list_themes') %>"
-    //const templateId = "<%#= issue_template&.id || '' %>"
-    //const templateType = 'issue_template' 
     const base_builtin_fields = <%= ('{"ttw_cats":' << TtwCat.enabled.sorted.to_a.to_json).html_safe %>,
                                 <%= ('"ttw_issue_templates":' << TtwIssueTemplate.enabled.sorted.to_a.to_json).html_safe %>,
-                                <%= ('"ttw_ttw_trackers":' << Tracker.sorted.to_a.to_json).html_safe %>}
+                                <%= ('"ttw_ttw_trackers":' << Tracker.sorted.to_a.to_json).html_safe %>,
+                                <%= ('"ttw_top_lvls":' << TtwTopLvl.enabled.sorted.to_a.to_json).html_safe %>}
 
 
     const projectId = 1// "<%#= project.id %>"
     const restApiKey = "<%= Setting['plugin_task_theme_wizard']['ttw_api_key'].presence || '' %>"
     const isTemplatesEnabled = "<%= Setting['plugin_task_theme_wizard']['ttw_templates_enabled'].presence || true %>"
 
-    if (window.cbImagePaste != undefined) {
+    if (window.cbImagePaste !== undefined) {
         window.onload = function() {
             let options = {}
             options.cbp_txt_too_many_files  = "Не удается добавить файл. Количество одновременно добавляемых файлов ограничено до 10."
@@ -41,15 +39,16 @@
         }
     }
 
-  </script>
+</script>
 
-  <%= javascript_include_tag('uikit.min', plugin: 'task_theme_wizard') %>
-  <%= javascript_include_tag('uikit-icons.min', plugin: 'task_theme_wizard') %>
-  <%#= javascript_include_tag('theme_selector.min', plugin: 'task_theme_wizard') %>
-  <%= javascript_include_tag('theme_paste_image.min', plugin: 'task_theme_wizard') %>
-  <%= javascript_include_tag('theme_paste_image', plugin: 'task_theme_wizard') %>
+<%= javascript_include_tag('uikit.min', plugin: 'task_theme_wizard') %>
+<%= javascript_include_tag('uikit-icons.min', plugin: 'task_theme_wizard') %>
+<%№= javascript_include_tag('theme_selector', plugin: 'task_theme_wizard') %>
+<%= javascript_include_tag('theme_selector.min', plugin: 'task_theme_wizard') %>
+<%= javascript_include_tag('theme_paste_image.min', plugin: 'task_theme_wizard') %>
+<%#= javascript_include_tag('theme_paste_image', plugin: 'task_theme_wizard') %>
 <% content_for :header_tags do %>
     <%#= stylesheet_link_tag 'uikit.min', :plugin => 'task_theme_wizard' %>
     <%= stylesheet_link_tag 'uikit_ttw.min', :plugin => 'task_theme_wizard' %>
     <%= stylesheet_link_tag 'task_theme_wizard', :plugin => 'task_theme_wizard' %>
-<% end %> 
+<% end %>

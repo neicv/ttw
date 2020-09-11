@@ -6,8 +6,8 @@
 
 RedmineApp::Application.routes.draw do
 
-    # create attchment categories in administration menu
-    resources :ttw_cats, :except => :show 
+  resources :ttw_cats, :except => :show
+  resources :ttw_top_lvls, :except => :show
     #do
 
     #   post 'list_themes', :to => 'ttw_cats#list_themes'
@@ -30,6 +30,8 @@ RedmineApp::Application.routes.draw do
 
 
     resources :ttw_issue_templates, :except => :show 
+
+    
 
     resources :ttw_issue_templates, only: %i[load preview list_templates] do
       get 'load', on: :collection
