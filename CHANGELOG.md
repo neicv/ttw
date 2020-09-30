@@ -1,3 +1,9 @@
+## 0.2.1 (September 30, 2020)
+
+### Added
+
+- User Simple Activity Report
+
 ## 0.2.0 (September 11, 2020)
 
 ### Added
@@ -9,23 +15,23 @@
 ### Added
 
 - Extend ClipBoard Image Plugin:
-thumbnail_box - have preview
+  thumbnail_box - have preview
 
 ### Fixed
+
 - Extend ClipBoard Image Plugin:
-fix click on link to 'Copy image and thumbnail link'
+  fix click on link to 'Copy image and thumbnail link'
 
 ## 0.1.6 (August 16, 2020)
 
 ### Added
 
 - Extend ClipBoard Image Plugin:
-When press Ctrl + V in description isuue the will paste collapse element and make full-size atachment picture.
+  When press Ctrl + V in description isuue the will paste collapse element and make full-size atachment picture.
 
 ### Fixed
 
 - fix destroy unexist listeners
-
 
 ## 0.1.5 (August 14, 2020)
 
@@ -37,13 +43,12 @@ When press Ctrl + V in description isuue the will paste collapse element and mak
 
 - List view categories (sub category now put into one string)
 
-
 ## 0.1.4 (August 11, 2020)
 
 ### Added
 
 - Second Confirm dialog when template apllied to not empty description field
-- When start main dialog templates defenition on tracker 
+- When start main dialog templates defenition on tracker
 
 ### Changed
 
@@ -51,8 +56,7 @@ When press Ctrl + V in description isuue the will paste collapse element and mak
 
 ### Fixed
 
-- fix Apply Template: Set template description to not empty description field 
-
+- fix Apply Template: Set template description to not empty description field
 
 ## 0.1.3 (August 09, 2020)
 
@@ -86,11 +90,8 @@ When press Ctrl + V in description isuue the will paste collapse element and mak
 
 - Settings params
 
-
-
 Know Issues:
 
-
 - info button bug:
-	when first click make on selector "infoTemplate",
-	- info button maight not work ower first click - second work
+  when first click make on selector "infoTemplate",
+  - info button maight not work ower first click - second work

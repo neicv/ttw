@@ -1,30 +1,33 @@
 ru:
-  label_setting_empty: "Тест строчка"
-  label_ttw_admin_title: "Шаблонка"
-  label_ttw_category_maker: "Категории Задач"
-  label_ttw_templates_maker: "Шаблонизатор Задач"
-  label_ttw_top_lvl_maker: "Верхний уровень"
-  label_ttw_category_new: "Новая категория"
-  label_ttw_category_plural: "Темайзер"
-  label_ttw_no_category_for_this_project: "Для данного проекта не настроены базовые категории темы."
-  label_ttw_no_issue_templates_for_this_project: "Для данного проекта не настроены шаблоны задач."
-  label_ttw_total: "Всего"
-  field_name: "Категория"
-  field_sub_category: "Подкатегория"
-  field_enabled: "Доступна"
-  field_tracker_str: "Трекер"
-  field_template_enabled: "Доступен"
-  field_toplvl: "Уровень"
-  label_ttw_this_category: "Активна"
-  error_unable_delete_category: "Невозможно удалить категорию"
-  text_ttw_sub_categoies_info: "По одному значению в каждой строке"
-  label_ttw_btn_start_theme: "Темайзер"
-  label_ttw_issue_info: "Используйте темайзер для заполнения темы задачи!"
-  label_ttw_issue_description: "Шаблон текста задачи"
-  label_ttw_issue_templates_plural: "Шаблонизатор"
-  label_ttw_new_templates: "Добавить шаблон"
-  label_ttw_issue_template_name: "Название шаблона"
-  label_ttw_settings_rest_api_key: "Rest API KEY"
-  label_ttw_settings_rest_api_key_description: "Api key"
-  label_ttw_settings_templates_enabled: "Использовать шаблоны задач"
-  label_ttw_toplvl: "Уровень"
+  label_setting_empty: 'Тест строчка'
+  label_ttw_admin_title: 'Шаблонка'
+  label_ttw_category_maker: 'Категории Задач'
+  label_ttw_templates_maker: 'Шаблонизатор Задач'
+  label_ttw_top_lvl_maker: 'Верхний уровень'
+  label_ttw_category_new: 'Новая категория'
+  label_ttw_category_plural: 'Темайзер'
+  label_ttw_no_category_for_this_project: 'Для данного проекта не настроены базовые категории темы.'
+  label_ttw_no_issue_templates_for_this_project: 'Для данного проекта не настроены шаблоны задач.'
+  label_ttw_total: 'Всего'
+  label_enabled: 'Вкл.'
+  field_name: 'Категория'
+  field_sub_category: 'Подкатегория'
+  field_enabled: 'Доступна'
+  field_tracker_str: 'Трекер'
+  field_template_enabled: 'Доступен'
+  field_toplvl: 'Уровень'
+  label_ttw_this_category: 'Активна'
+  error_unable_delete_category: 'Невозможно удалить категорию'
+  text_ttw_sub_categoies_info: 'По одному значению в каждой строке'
+  label_ttw_btn_start_theme: 'Темайзер'
+  label_ttw_issue_info: 'Используйте темайзер для заполнения темы задачи!'
+  label_ttw_issue_description: 'Шаблон текста задачи'
+  label_ttw_issue_templates_plural: 'Шаблонизатор'
+  label_ttw_new_templates: 'Добавить шаблон'
+  label_ttw_issue_template_name: 'Название шаблона'
+  label_ttw_settings_rest_api_key: 'Rest API KEY'
+  label_ttw_settings_rest_api_key_description: 'Api key'
+  label_ttw_settings_templates_enabled: 'Использовать шаблоны задач'
+  label_ttw_toplvl: 'Уровень'
+  label_user_report: 'Отчёт'
+  label_ttw_no_toplvl_for_this_project: 'Для данного проекта не настроены темы верхнего уровня.'

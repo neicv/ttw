@@ -8,6 +8,8 @@ RedmineApp::Application.routes.draw do
 
   resources :ttw_cats, :except => :show
   resources :ttw_top_lvls, :except => :show
+  resources :ttw_user_report, :except => :show
+  get 'projects/:project_id/ttw_user_report', to: 'ttw_user_report#index'
     #do
 
     #   post 'list_themes', :to => 'ttw_cats#list_themes'

@@ -26,6 +26,7 @@ class TtwCatsController < ApplicationController
 
   def new
     @ttw_cat = TtwCat.new
+    @ttw_top_lvls = TtwTopLvl.all
   end
 
   def create

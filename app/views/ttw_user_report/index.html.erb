@@ -1,0 +1,125 @@
+
+<fieldset><legend><%= l(:label_filter_plural) %></legend>
+
+<%= form_tag({}, :method => :get) do %> 
+<!-- ttw_user_report_path-->
+<fieldset><legend><%= l(:label_filter_plural) %></legend>
+  <p>
+    <label for='user'><%= l(:field_user) %></label>
+    <%= select_tag('user_id',
+                  content_tag('option', l(:label_no_change_option), :value => '') +
+                  principals_options_for_select(@users, @user), :class => "small", :onchange => "this.form.submit(); return false;" ) %>
+  </p>
+  <!--<#% if @issue.safe_attribute? 'start_date' %>-->
+  <p> 
+    <span id="date_from_area">
+    <label for='from'><%= l(:label_date_from)%>
+    <%= text_field_tag 'from', @date_from, :size => 10 , :onchange => "this.form.submit(); return false;" %>
+    <%= calendar_for('from') %>
+    </span>
+
+    <span id="date_end_area">
+    <label for='end'><%= l(:label_date_to)%>
+    <%= text_field_tag 'end', @date_to, :size => 10 , :onchange => "this.form.submit(); return false;" %>
+    <%= calendar_for('end') %>
+    </span>
+  </p>
+
+</fieldset>
+<% end %>
+&nbsp;
+
+<h2><%= avatar @user, :size => "50" %> <%= @user.name %></h2>
+
+<div class="splitcontentleft">
+  <ul>
+    <% if User.current.admin? %>
+    <li><%=l(:field_login)%>: <%= @user.login %></li>
+    <% end %> <% unless @user.pref.hide_mail %>
+    <li>
+      <%=l(:field_mail)%>: <%= mail_to(@user.mail, nil, :encode => 'javascript')
+      %>
+    </li>
+    <% end %> <% @user.visible_custom_field_values.each do |custom_value| %> <%
+    if !custom_value.value.blank? %>
+    <li>
+      <%= custom_value.custom_field.name %>: <%= show_value(custom_value) %>
+    </li>
+    <% end %> <% end %>
+    <li><%=l(:label_registered_on)%>: <%= format_date(@user.created_on) %></li>
+    <% unless @user.last_login_on.nil? %>
+    <li>
+      <%=l(:field_last_login_on)%>: <%= format_date(@user.last_login_on) %>
+    </li>
+    <% end %>
+  </ul>
+
+  <% unless @memberships.empty? %>
+  <h3><%=l(:label_project_plural)%></h3>
+  <ul>
+    <% for membership in @memberships %>
+    <li>
+      <%= link_to_project(membership.project) %> (<%=
+      membership.roles.sort.collect(&:to_s).join(', ') %>, <%=
+      format_date(membership.created_on) %>)
+    </li>
+    <% end %>
+  </ul>
+  <% end %> <%= call_hook :view_account_left_bottom, :user => @user %>
+</div>
+
+<div class="splitcontentright">
+  <!--<#% unless @events_by_day.empty? %>-->
+  <h2><%= @author.nil? ? l(:label_activity) : l(:label_user_activity, link_to_user(@author)).html_safe %></h2>
+  <p class="subtitle"><%= l(:label_date_from_to, :start => format_date(@date_to - @days), :end => format_date(@date_to-1)) %></p>
+  <!--<h3>
+    <%#= link_to l(:label_activity), :controller => 'activities', :action =>
+    'index', :id => nil, :user_id => @user, :from => @events_by_day.keys.first
+    %>
+  </h3>-->
+
+  <p>
+    <%=l(:label_reported_issues)%>: <%= Issue.where(:author_id =>
+    @user.id).count %>
+  </p>
+
+  <div id="activity">
+    <% @events_by_day.keys.sort.reverse.each do |day| %>
+    <h4><%= format_activity_day(day) %></h4>
+    <dl>
+      <% @events_by_day[day].sort {|x,y| y.event_datetime <=> x.event_datetime
+      }.each do |e| -%>
+      <dt class="<%= e.event_type %>">
+        <span class="time"><%= format_time(e.event_datetime, false) %></span>
+        <%= content_tag('span', e.project, :class => 'project') %> <%= link_to format_activity_title(e.event_title), e.event_url %>
+      </dt>
+      <dd>
+        <span class="description"
+          ><%= format_activity_description(e.event_description) %></span>
+      </dd>
+      <% end -%>
+    </dl>
+    <% end -%>
+  </div>
+
+  <%= content_tag('p', l(:label_no_data), :class => 'nodata') if @events_by_day.empty? %>
+
+  <div style="float:left;">
+  <%= link_to_content_update("\xc2\xab " + l(:label_previous),
+                    params.merge(:from => @date_to -  2*@days,  :end => @date_to - @days - 1),
+                    :title => l(:label_date_from_to, :start => format_date(@date_to - 2*@days), :end => format_date(@date_to - @days - 1)),
+                    :accesskey => accesskey(:previous)) %>
+  </div>
+  <div style="float:right;">
+  <%= link_to_content_update(l(:label_next) + " \xc2\xbb",
+                    params.merge(:from => @date_to, :end =>@date_to + @days - 1),
+                    :title => l(:label_date_from_to, :start => format_date(@date_to), :end => format_date(@date_to + @days - 1)),
+                    :accesskey => accesskey(:next)) unless @date_to >= Date.today %>
+  </div>
+  &nbsp;
+
+</div>
+
+<% html_title @user.name %>
+
+<% include_calendar_headers_tags %>
