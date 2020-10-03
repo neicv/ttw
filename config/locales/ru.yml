@@ -32,6 +32,7 @@ ru:
   label_settings_ttw_issue_status_for_validate: 'Требовать "Примечания" при статусах: '
   label_ttw_toplvl: 'Уровень'
   label_user_report: 'Отчёт'
+  label_ttw_report_plural: 'отчёт по действиям пользователя'
   label_ttw_no_toplvl_for_this_project: 'Для данного проекта не настроены темы верхнего уровня.'
   activerecord:
     errors:

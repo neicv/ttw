@@ -1,8 +1,11 @@
-<fieldset><legend><%= l(:label_filter_plural) %></legend>
+<fieldset><legend><%= l(:label_ttw_report_plural) %></legend>
 
 <%= form_tag({}, :method => :get) do %> 
 <!-- ttw_user_report_path-->
-<fieldset><legend><%= l(:label_filter_plural) %></legend>
+<div class="splitcontentleft">
+<fieldset>
+<legend><%= l(:label_filter_plural) %></legend>
+
   <p>
     <label for='user'><%= l(:field_user) %></label>
     <%= select_tag('user_id',
@@ -22,9 +25,42 @@
     <%= text_field_tag 'end', @date_to, :size => 10 , :onchange => "this.form.submit(); return false;" %>
     <%= calendar_for('end') %>
     </span>
+
+    <span style="float:right;">
+    <%= link_to_content_update(l(:label_today).mb_chars.capitalize.to_s, # requires ActiveSupport::Multibyte
+                    params.merge(:from =>  Date.today, :end => Date.today + 1),
+                    :title => l(:label_date_from_to, :start => format_date( Date.today), :end => format_date(Date.today + 1))
+                    )%>
+                    &nbsp;
+    <%= link_to_content_update(l(:label_yesterday).mb_chars.capitalize.to_s,  
+                    params.merge(:from => Date.today - 1, :end => Date.today),
+                    :title => l(:label_date_from_to, :start => format_date(Date.today - 1), :end => format_date(Date.today))
+                    )%>
+                    &nbsp;
+    <%= link_to_content_update(l(:label_week),  
+                    params.merge(:from => Date.today - 7, :end => Date.today + 1),
+                    :title => l(:label_date_from_to, :start => format_date(Date.today - 7), :end => format_date(Date.today + 1))
+                    )%>
+                    &nbsp;
+    <%= link_to_content_update(l(:label_month),  
+                    params.merge(:from => Date.today << 1, :end => Date.today + 1), # << 1  - минус 1 месяц
+                    :title => l(:label_date_from_to, :start => format_date(Date.today << 1), :end => format_date(Date.today + 1))
+                    )%>
+                    &nbsp;
+    </span>
   </p>
 
+</div>
+
+<div class="splitcontentright">
+<!--<legend><%#= l(:label_filter_plural) %></legend>-->
+<!-- <div class="box tabular"> -->
+
+
+<!--</div>-->
+</div>
 </fieldset>
+
 <% end %>
 &nbsp;
 
@@ -70,7 +106,7 @@
 <div class="splitcontentright">
   <!--<#% unless @events_by_day.empty? %>-->
   <h2><%= @author.nil? ? l(:label_activity) : l(:label_user_activity, link_to_user(@author)).html_safe %></h2>
-  <p class="subtitle"><%= l(:label_date_from_to, :start => format_date(@date_to - @days), :end => format_date(@date_to-1)) %></p>
+  <p class="subtitle"><%= l(:label_date_from_to, :start => format_date(@date_from), :end => format_date(@date_to)) %></p>
   <!--<h3>
     <%#= link_to l(:label_activity), :controller => 'activities', :action =>
     'index', :id => nil, :user_id => @user, :from => @events_by_day.keys.first
@@ -105,8 +141,8 @@
 
   <div style="float:left;">
   <%= link_to_content_update("\xc2\xab " + l(:label_previous),
-                    params.merge(:from => @date_to -  2*@days,  :end => @date_to - @days - 1),
-                    :title => l(:label_date_from_to, :start => format_date(@date_to - 2*@days), :end => format_date(@date_to - @days - 1)),
+                    params.merge(:from => @date_from -  @days,  :end => @date_from),
+                    :title => l(:label_date_from_to, :start => format_date(@date_from - @days), :end => format_date(@date_from)),
                     :accesskey => accesskey(:previous)) %>
   </div>
   <div style="float:right;">
@@ -119,6 +155,8 @@
 
 </div>
 
+</fieldset>
+
 <% html_title @user.name %>
 
-<% include_calendar_headers_tags %>
+<!--<#% include_calendar_headers_tags %>-->

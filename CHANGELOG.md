@@ -1,3 +1,11 @@
+## 0.2.2 (October 4, 2020)
+
+### Added
+
+- Validate parans before safe Issue
+- need set Notes on change IssueStatus (configurable)
+- User Simple Activity Report add filters shorcut (today, esterday, week, month)
+
 ## 0.2.1 (September 30, 2020)
 
 ### Added
