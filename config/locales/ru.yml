@@ -28,6 +28,15 @@ ru:
   label_ttw_settings_rest_api_key: 'Rest API KEY'
   label_ttw_settings_rest_api_key_description: 'Api key'
   label_ttw_settings_templates_enabled: 'Использовать шаблоны задач'
+  label_ttw_settings_assign_to_author: 'Задача назначена на автора'
+  label_settings_ttw_issue_status_for_validate: 'Требовать "Примечания" при статусах: '
   label_ttw_toplvl: 'Уровень'
   label_user_report: 'Отчёт'
   label_ttw_no_toplvl_for_this_project: 'Для данного проекта не настроены темы верхнего уровня.'
+  activerecord:
+    errors:
+      messages:
+        estimated_hours_fill: 'Должно быть заполнено'
+        notes_fill: '- не заполнено.'
+        notes_fill_size: '- сформулируте комментарий полнее.'
+        notes_fill_some_error: 'Что то пошло не так в task_theme_wizard/patches/issue_patch'

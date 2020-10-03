@@ -3,12 +3,14 @@ Redmine::Plugin.register :task_theme_wizard do
     name 'Task Theme Wizard plugin'
     author 'Friendly-IT'
     description 'This is a plugin for Redmine'
-    version '0.2.1'
+    version '0.2.2'
     url 'http://localhost/redmine/plugin/task_theme_wizard'
     author_url 'https://friendly-it.ru/redmine'
     requires_redmine :version_or_higher => '3.1.0'
     settings 	:partial => 'settings/task_theme_wizard/plugin_settings',
-        :default => {'ttw_templates_enabled' => true, 'ttw_api_key' => nil}
+        :default => { 'ttw_templates_enabled' => true, 
+                      'ttw_api_key' => nil,
+                      'ttw_assign_to_author' => false }
 
 
     menu :project_menu, :ttw_user_report, { controller: 'ttw_user_report', action: 'index' },

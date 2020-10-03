@@ -12,5 +12,17 @@
       <%= text_field_tag('settings[ttw_api_key]', Setting.plugin_task_theme_wizard['ttw_api_key'], :size => 48, :placeholder => l(:label_ttw_settings_rest_api_key_description)) %> 
     </p>
     <% end %>
+
+    <p>
+      <label for='settings_ttw_assign_to_author'><%= l(:label_ttw_settings_assign_to_author) %></label>
+      <%= hidden_field_tag('settings[ttw_assign_to_author]', 0, :id => nil).html_safe %>
+      <%= check_box_tag 'settings[ttw_assign_to_author]', true, @settings['ttw_assign_to_author'] == 'true' %>
+    </p>
+
+    <p>
+    <label><%= l(:label_settings_ttw_issue_status_for_validate) %></label>
+      <%= select_tag 'settings[ttw_issue_status_for_validate]', options_for_select(IssueStatus.all.map{|is| [is.name, is.id]}, TaskThemeWizard.issue_status_for_validate), :multiple => true, :size => 10, :style => "width:150px" %>
+    </p>
+
   </fieldset>
 </div>
