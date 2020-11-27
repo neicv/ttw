@@ -39,5 +39,5 @@ ru:
       messages:
         estimated_hours_fill: 'Должно быть заполнено'
         notes_fill: '- не заполнено.'
-        notes_fill_size: '- сформулируте комментарий полнее.'
+        notes_fill_size: '- сформулируйте комментарий полнее.'
         notes_fill_some_error: 'Что то пошло не так в task_theme_wizard/patches/issue_patch'

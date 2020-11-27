@@ -21,7 +21,7 @@
 
     <p>
     <label><%= l(:label_settings_ttw_issue_status_for_validate) %></label>
-      <%= select_tag 'settings[ttw_issue_status_for_validate]', options_for_select(IssueStatus.all.map{|is| [is.name, is.id]}, TaskThemeWizard.issue_status_for_validate), :multiple => true, :size => 10, :style => "width:150px" %>
+      <%= select_tag 'settings[ttw_issue_status_for_validate]', options_for_select(IssueStatus.all.map{|is| [is.name, is.id]}, TaskThemeWizard.issue_status_for_validate), :multiple => true, :size => 10, :style => "width:300px" %>
     </p>
 
   </fieldset>

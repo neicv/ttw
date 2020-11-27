@@ -1,3 +1,10 @@
+## 0.2.2 fix (November 28, 2020)
+
+### Fixed
+
+ - Paste text from clipboard to Text Theme area
+ - Paste image from clipboard to Issue Notes Area.
+
 ## 0.2.2 (October 4, 2020)
 
 ### Added
