@@ -1,86 +1,136 @@
 'use strict'
-function startTPI(options = {}) {
-  if (document.getElementById('cbp_image_fields') == undefined) return
-  // pasted image
-  let optionsTPI = options
-  let pastedImage
-  let issueDescription = document.getElementById('issue_description')
-  let issueNotes = document.getElementById('issue_notes')
-  issueDescription = issueNotes ? issueNotes : issueDescription
+let options = {}
+    options.cbp_txt_too_many_files  = "Не удается добавить файл. Количество одновременно добавляемых файлов ограничено до 10."
+    options.cbp_txt_too_big_image   = "Макс объём файла не более 5 мб"
+    options.cbp_txt_copy_link       = "Ссылка на изображение и превью"
+    options.cbp_max_attach_size     = 5242880
+    options.cbp_max_attachments     = 10
+    options.cbp_act_update_id       = "" // "<%= "%03d" % (Time.now.usec / 1000) %>"
+    options.define_link_path        = "" //"/redmine" 
 
-  // Add the paste event listener
-  issueDescription.addEventListener('paste', pasteHandler, false)
+let optionsTPI = options;
+let pastedImage,
+    issueDescription,
+    issueNotes;
 
-  function pasteHandler(e) {
+const observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+        if (mutation.type === 'childList') {
+            for (let node of mutation.addedNodes) {
+                if (node.id === 'issue_description') {
+                    console.log('A child node has been added: ', node.id);
+                    addPasteHandler();
+                }  
+            }
+        }
+    });    
+})
+
+// --------- Add event listeners -------------- //
+document.onreadystatechange = () => {
+    if (document.readyState === 'complete') {
+        if (document.getElementById('cbp_image_fields') == undefined) return
+
+        addPasteHandler();
+
+        let testEl = document.getElementById('content')
+
+        if (testEl) {
+            observer.observe(
+                testEl,
+                {
+                    childList: true,
+                    attributes: false,
+                    subtree: true,
+                    characterData: false,
+                    attributeOldValue: false
+                }
+            );
+        }
+    }
+}
+
+function addPasteHandler() {
+    issueDescription = document.getElementById('issue_description');
+    issueNotes       = document.getElementById('issue_notes');
+    issueDescription = issueNotes ? issueNotes : issueDescription;
+
+    // Add the paste event listener
+    if (issueDescription) {
+        issueDescription.addEventListener('paste', pasteHandler, false);
+    }
+}
+
+function pasteHandler(e) {
     let clipboardData
     //let pastedData
     clipboardData = e.clipboardData || window.clipboardData
     let items = clipboardData.items
     if (!items) return
     else {
-      // Loop through all items, looking for any kind of image
-      for (let i = 0; i < items.length; i++) {
+        // Loop through all items, looking for any kind of image
+        for (let i = 0; i < items.length; i++) {
         if (items[i].type.indexOf('image') !== -1) {
-          event.stopPropagation()
-          event.preventDefault()
-          // We need to represent the image as a file,
-          let blob = items[i].getAsFile()
-          // and use a URL or webkitURL (whichever is available to the browser)
-          // to create a temporary URL to the object
-          let URLObj = window.URL || window.webkitURL
-          let source = URLObj.createObjectURL(blob)
+            e.stopPropagation()
+            e.preventDefault()
+            // We need to represent the image as a file,
+            let blob = items[i].getAsFile()
+            // and use a URL or webkitURL (whichever is available to the browser)
+            // to create a temporary URL to the object
+            let URLObj = window.URL || window.webkitURL
+            let source = URLObj.createObjectURL(blob)
 
-          // The URL can then be used as the source of an image
-          createImage(source)
-          return
+            // The URL can then be used as the source of an image
+            createImage(source)
+            return
         }
-      }
+        }
     }
-  }
+}
 
-  // Creates a new image from a given source
-  function createImage(source) {
+// Creates a new image from a given source
+function createImage(source) {
     pastedImage = new Image()
     pastedImage.onload = function () {
-      let dst = document.createElement('canvas')
-      dst.width = pastedImage.width
-      dst.height = pastedImage.height
-      let ctx = dst.getContext('2d')
-      ctx.drawImage(pastedImage, 0, 0)
-      let sImg = dst.toDataURL('image/png')
-      let name = insertAttachment(sImg)
-      //let id = name.split('picture').join('')
-      //id = id.split('.png').join('')
-      //let description = document.getElementById('cbp_picture-description' + id)
-      //description = description.value || 'картинка'
-      //let text = '{{collapse('+ description + ')\n!' + name + '!\n}}'
-      let text = '{{collapse(Картинка)\n!' + name + '!\n}}'
-      insertText(issueDescription, text)
-      //alert('OnLoad!')
+        let dst = document.createElement('canvas')
+        dst.width = pastedImage.width
+        dst.height = pastedImage.height
+        let ctx = dst.getContext('2d')
+        ctx.drawImage(pastedImage, 0, 0)
+        let sImg = dst.toDataURL('image/png')
+        let name = insertAttachment(sImg)
+        //let id = name.split('picture').join('')
+        //id = id.split('.png').join('')
+        //let description = document.getElementById('cbp_picture-description' + id)
+        //description = description.value || 'картинка'
+        //let text = '{{collapse('+ description + ')\n!' + name + '!\n}}'
+        let text = '{{collapse(Картинка)\n!' + name + '!\n}}'
+        insertText(issueDescription, text)
+        //alert('OnLoad!')
     }
 
     pastedImage.src = source
-  }
+}
 
-  //****************************************************************************
-  //
-  // Redmine stuff
-  //
-  //****************************************************************************
+//****************************************************************************
+//
+// Redmine stuff
+//
+//****************************************************************************
 
-  // image attachment id offset
-  // see attachment_patch.rb
-  let imageAttachIdOfs = 10000
+// image attachment id offset
+// see attachment_patch.rb
+let imageAttachIdOfs = 10000
 
-  // image field counter
-  let imageAttachCount = 0
+// image field counter
+let imageAttachCount = 0
 
-  //----------------------------------------------------------------------------
-  // Insert attachment input tag into document.
-  function insertAttachment(rawImg) {
+//----------------------------------------------------------------------------
+// Insert attachment input tag into document.
+function insertAttachment(rawImg) {
     if (!pastedImage) {
-      alert(optionsTPI.cbp_txt_no_image_pst)
-      return
+        alert(optionsTPI.cbp_txt_no_image_pst)
+        return
     }
 
     let fields = checkAttachFields()
@@ -90,9 +140,9 @@ function startTPI(options = {}) {
     let dataUrl = rawImg
 
     if (dataUrl.length > optionsTPI.cbp_max_attach_size) {
-      //5242880)
-      alert(optionsTPI.cbp_txt_too_big_image)
-      return
+        //5242880)
+        alert(optionsTPI.cbp_txt_too_big_image)
+        return
     }
 
     // inspired by redmine/public/javascripts/application.js
@@ -101,7 +151,7 @@ function startTPI(options = {}) {
     // generate "unique" identifier, using "random" part cbImagePaste.cbp_act_update_id
     let attachId = generateID() + '-' + imageAttachCount
     let attachInpId =
-      'attachments[' + (imageAttachIdOfs + imageAttachCount) + ']'
+        'attachments[' + (imageAttachIdOfs + imageAttachCount) + ']'
 
     let s = document.createElement('span') //clone()
 
@@ -142,8 +192,8 @@ function startTPI(options = {}) {
     elA.setAttribute('id', 'cbp_link_btn')
     elA.setAttribute('href', '#')
     elA.setAttribute(
-      'onclick',
-      'showCopyLink(this, this.previousElementSibling, "' +
+        'onclick',
+        'showCopyLink(this, this.previousElementSibling, "' +
         optionsTPI.cbp_txt_copy_link +
         '"); return false;'
     )
@@ -172,15 +222,15 @@ function startTPI(options = {}) {
     elA = document.createElement('a')
     elA.setAttribute('href', '#')
     elA.setAttribute(
-      'onclick',
-      'cbImagePaste.removeImageField(this); return false;'
+        'onclick',
+        'cbImagePaste.removeImageField(this); return false;'
     )
     elA.setAttribute('title', 'Удалить')
 
     elImg = document.createElement('img')
     elImg.setAttribute(
-      'src',
-      optionsTPI.define_link_path + '/images/delete.png'
+        'src',
+        optionsTPI.define_link_path + '/images/delete.png'
     )
     elImg.setAttribute('alt', 'Delete')
     elA.appendChild(elImg)
@@ -189,36 +239,36 @@ function startTPI(options = {}) {
     //console.log(s.outerHTML)
     fields.append(s)
     return pictureName
-  }
+}
 
-  //----------------------------------------------------------------------------
-  // Check maximum number of attachment fields, return fields element.
-  function checkAttachFields() {
+//----------------------------------------------------------------------------
+// Check maximum number of attachment fields, return fields element.
+function checkAttachFields() {
     let fileFields = document.querySelector('#attachments_fields')
     let imageFields = document.querySelector('#cbp_image_fields')
     if (
-      !fileFields ||
-      !imageFields ||
-      fileFields.children.length + imageFields.children.length >=
+        !fileFields ||
+        !imageFields ||
+        fileFields.children.length + imageFields.children.length >=
         optionsTPI.cbp_max_attachments
     )
-      return
+        return
     return imageFields
-  }
 }
 
+
 function insertText(txtarea, text) {
-  let start = txtarea.selectionStart
-  let end = txtarea.selectionEnd
-  let finText =
-    txtarea.value.substring(0, start) + text + txtarea.value.substring(end)
-  txtarea.value = finText
-  txtarea.focus()
-  txtarea.selectionEnd = start == end ? end + text.length : end
+    let start = txtarea.selectionStart
+    let end = txtarea.selectionEnd
+    let finText =
+        txtarea.value.substring(0, start) + text + txtarea.value.substring(end)
+    txtarea.value = finText
+    txtarea.focus()
+    txtarea.selectionEnd = start == end ? end + text.length : end
 }
 
 function generateID() {
-  return '-' + Math.random().toString(36).substr(2, 9)
+    return '-' + Math.random().toString(36).substr(2, 9)
 }
 
 //----------------------------------------------------------------------------
@@ -248,42 +298,42 @@ function showCopyLink(btn, name, cbp_txt_copy_link) {
     </div>
     `
 
-  dialog(document.querySelector('#cbp_link_dlg'), {
-    content: tmplDialog,
-    closeOnEscape: true,
-    modal: true,
-    resizable: false,
-    dialogClass: 'cbp_drop_shadow cbp_dlg_small',
-    position: { my: 'left top', at: 'left bottom', of: btn },
-    minHeight: 0,
-    width: 'auto'
-  })
+    dialog(document.querySelector('#cbp_link_dlg'), {
+        content: tmplDialog,
+        closeOnEscape: true,
+        modal: true,
+        resizable: false,
+        dialogClass: 'cbp_drop_shadow cbp_dlg_small',
+        position: { my: 'left top', at: 'left bottom', of: btn },
+        minHeight: 0,
+        width: 'auto'
+    })
 }
 
 function showPreviewImg(img) {
-  let tmplDialog = `
-    <div id="modal-media-image" class="uk-flex-top">
-        <div class="uk-width-auto uk-margin-auto-vertical">
-            <button class="uk-modal-close-outside" type="button" uk-close></button>
-                <img src=${img} alt="" width="400" height="300">
+    let tmplDialog = `
+        <div id="modal-media-image" class="uk-flex-top">
+            <div class="uk-width-auto uk-margin-auto-vertical">
+                <button class="uk-modal-close-outside" type="button" uk-close></button>
+                    <img src=${img} alt="" width="400" height="300">
+            </div>
         </div>
-    </div>
-    `
-  dialog(document.querySelector('#cbp_link_dlg'), {
-    content: tmplDialog,
-    closeOnEscape: true,
-    modal: true,
-    resizable: false,
-    dialogClass: 'cbp_drop_shadow cbp_dlg_small',
-    //position: { my: "left top", at: "left bottom", of: btn },
-    minHeight: 0,
-    width: 'auto'
-  })
+        `
+    dialog(document.querySelector('#cbp_link_dlg'), {
+        content: tmplDialog,
+        closeOnEscape: true,
+        modal: true,
+        resizable: false,
+        dialogClass: 'cbp_drop_shadow cbp_dlg_small',
+        //position: { my: "left top", at: "left bottom", of: btn },
+        minHeight: 0,
+        width: 'auto'
+    })
 }
 
 function dialog(element, options = {}) {
-  const modalConfirm = UIkit.modal.dialog(options.content, {
-    stack: true,
-    bgClose: true
-  })
+    const modalConfirm = UIkit.modal.dialog(options.content, {
+        stack: true,
+        bgClose: true
+    })
 }

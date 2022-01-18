@@ -41,8 +41,15 @@ module TaskThemeWizard
             return true if arg.nil? || arg.empty? || status_id.nil?
 
             if arg.is_a?(Array)
-              # logger.info "- - - - --  Arg attributes hash: #{arg}"
+              
               if arg.include? status_id.to_s
+                old_value = Issue.find(id).status_id
+                # assigned_to_id
+                # logger.info "- - - - - -  Arg attributes Print: #{old_value} - - - - - -"
+
+                # Статусы задач » Проверка: Тестирование (dev) = 32
+                # Не требовать комментарий при этом статусе повторно
+                return true if status_id == old_value && status_id == 32
 
                 if notes.empty? # notes == "" 
                   errors.add :notes, :notes_fill

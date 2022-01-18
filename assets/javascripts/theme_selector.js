@@ -228,9 +228,9 @@ function startTTW(
                                         <div class="uk-form-controls">
                                         <div class="uk-inline checkbox-apply">
                                         ${elSelectedTemplate}
-                                        <span uk-tooltip="title: Если параметр установлен, трекер и описание задачи будет очищены и заменены текстом и трекером из шаблона.; pos: top-right; delay: 500">
+                                        <div style="display: inherit;" uk-tooltip="title: Если параметр установлен, трекер и описание задачи будет очищены и заменены текстом и трекером из шаблона.; pos: top-right; delay: 500">
                                         <input class="uk-checkbox ttw-checkbox" style="font-size: 1.5rem;" type="checkbox" checked id="ttw-template-apply">
-                                        </span>
+                                        </div>
                                         </div>
                                         </div>
                                     </div>`
@@ -343,11 +343,21 @@ function startTTW(
                 clipboardData = event.clipboardData || window.clipboardData
                 pastedData = avoidHTML(clipboardData.getData('Text'))
                 pastedData = pastedData.replace(/[\t\r\n]/g, ' ')
-                pastedData = pastedData.slice(
-                    0,
-                    SUBJECT_MAX_LENGTH - getFieldString(fieldset, loadedSelector).length
-                )
-                if (pastedData.length != 0) textarea.value = pastedData
+
+                if (pastedData.length != 0) {
+                    let cur = getInputSelection(textarea)
+                    let _pastedData = pasteContentToStringArea(pastedData, textarea.value, cur.start, cur.end)
+                    _pastedData = _pastedData.slice(
+                        0,
+                        SUBJECT_MAX_LENGTH - getFieldString(fieldset, loadedSelector).length
+                    )
+                    textarea.value = _pastedData
+                    if (pastedData.length < _pastedData.length) {
+                        textarea.selectionEnd = cur.start + pastedData.length
+                    }
+                    
+                    btnOk.disabled = !isValidSummaryString(textarea.value)
+                }
             }
 
             listenerTextareaInput = function (e) {
@@ -830,4 +840,52 @@ function makeElementsSelectors(loadedSelector, topLevel, tempCategory, tempSubCa
         elSubCategory: elSelectSubCategory,
         tempSubSelect: subSelect
     }
+}
+
+function getInputSelection(el) {
+    let start = 0,
+        end   = 0,
+        normalizedValue, range, textInputRange, len, endRange;
+
+    if (el === undefined) {
+        return;
+    }
+
+    if (typeof el.selectionStart == "number" && typeof el.selectionEnd == "number") {
+        start = el.selectionStart;
+        end   = el.selectionEnd;
+    } else {
+        range = document.selection.createRange();
+
+        if (range && range.parentElement() === el) {
+            len = el.value.length;
+            normalizedValue = el.value.replace(/\r\n/g, "\n");
+
+            textInputRange = el.createTextRange();
+            textInputRange.moveToBookmark(range.getBookmark());
+
+            endRange = el.createTextRange();
+            endRange.collapse(false);
+
+            if (textInputRange.compareEndPoints("StartToEnd", endRange) > -1) {
+                start = end = len;
+            } else {
+                start = -textInputRange.moveStart("character", -len);
+                start += normalizedValue.slice(0, start).split("\n").length - 1;
+
+                if (textInputRange.compareEndPoints("EndToEnd", endRange) > -1) {
+                    end = len;
+                } else {
+                    end = -textInputRange.moveEnd("character", -len);
+                    end += normalizedValue.slice(0, end).split("\n").length - 1;
+                }
+            }
+        }
+    }
+
+    return { start, end };
+}
+
+function pasteContentToStringArea(content, stringarea, start, end) {
+    return [stringarea.slice(0, start), content, stringarea.slice(end)].join('')
 }
